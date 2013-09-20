@@ -14,7 +14,7 @@ describe Bandwidth::AccountAPI do
       JSON
     ]}
 
-    @bandwidth.account.balance == 538.3725
-    @bandwidth.account.account_type == "pre-pay"
+    assert_equal @bandwidth.account.balance, 538.3725
+    assert_equal @bandwidth.account.account_type, "pre-pay"
   end
 end
