@@ -6,5 +6,14 @@ module Bandwidth
 
       HashWithUnderscoreAccess.new account
     end
+
+    def transactions
+      transactions = get 'account/transactions'
+
+      transactions.map do |transaction|
+        transaction['amount'] = transaction['amount'].to_f
+        HashWithUnderscoreAccess.new transaction
+      end
+    end
   end
 end
