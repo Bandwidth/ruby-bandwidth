@@ -1,6 +1,8 @@
 require 'faraday'
 require 'json'
 
+require 'bandwidth/hash_with_underscore_access'
+
 require "bandwidth/account_api"
 require "bandwidth/connection"
 require "bandwidth/version"
