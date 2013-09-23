@@ -48,11 +48,42 @@ describe Bandwidth::AccountAPI do
 
     transaction = transactions.first
     assert_equal transaction.id, "pptx-wqfnffduxiki4fd5ubhv77a"
-    assert_equal transaction.time, "2013-02-21T13:39:09.122Z"
+    assert_equal transaction.time, Time.parse("2013-02-21T13:39:09.122Z")
     assert_equal transaction.amount, 0.00750
     assert_equal transaction.type, "charge"
     assert_equal transaction.units, "1"
     assert_equal transaction.product_type, "sms-out"
     assert_equal transaction.number, "+12345678910"
+  end
+
+  it "filters by date" do
+    from = "2013-02-21T13:38:00Z"
+    to = "2013-02-21T13:40:00Z"
+
+    @bandwidth.stub.get("/account/transactions") do |request|
+      assert_equal request[:params]['fromDate'], from
+      assert_equal request[:params]['toDate'], to
+      [200, {}, "{}"]
+    end
+
+    transactions = @bandwidth.transactions from_date: Time.parse(from), to_date: Time.parse(to)
+  end
+
+  it "filters by payment type" do
+    @bandwidth.stub.get("/account/transactions") do |request|
+      assert_equal request[:params]['type'], "auto-recharge"
+      [200, {}, "{}"]
+    end
+
+    transactions = @bandwidth.transactions type: Bandwidth::AccountAPI::AUTO_RECHARGE
+  end
+
+  it "limits the results" do
+    @bandwidth.stub.get("/account/transactions") do |request|
+      assert_equal request[:params]['maxItems'], "1"
+      [200, {}, "{}"]
+    end
+
+    transactions = @bandwidth.transactions max_items: 1
   end
 end

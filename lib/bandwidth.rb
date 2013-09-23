@@ -2,6 +2,7 @@ require 'faraday'
 require 'json'
 
 require 'bandwidth/hash_with_underscore_access'
+require 'bandwidth/hash_camelizer'
 
 require "bandwidth/account_api"
 require "bandwidth/connection"

@@ -8,24 +8,28 @@ module Bandwidth
 
   protected
     def get path, parameters={}
-      normalize_response connection.get url(path), parameters
+      normalize_response connection.get url(path), camelcase(parameters)
     end
 
     def post path, parameters={}
-      normalize_response connection.post url(path), parameters
+      normalize_response connection.post url(path), camelcase(parameters)
     end
 
     def put path, parameters={}
-      normalize_response connection.put url(path), parameters
+      normalize_response connection.put url(path), camelcase(parameters)
     end
 
     def delete path, parameters={}
-      normalize_response connection.delete url(path), parameters
+      normalize_response connection.delete url(path), camelcase(parameters)
     end
 
   private
     API_ENDPOINT = 'https://api.catapult.inetwork.com'
     API_VERSION = 'v1'
+
+    def camelcase hash
+      HashCamelizer.new hash
+    end
 
     def url path
       [API_ENDPOINT, API_VERSION, 'users', @user_id, path].join '/'
