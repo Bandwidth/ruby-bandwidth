@@ -1,6 +1,6 @@
-require_relative '../../test_helper'
+require_relative '../../../test_helper'
 
-describe Bandwidth::AccountAPI do
+describe Bandwidth::API::Account do
   before do
     @bandwidth = Bandwidth::StubbedConnection.new 'user_id', 'token', 'secret'
   end
@@ -14,8 +14,8 @@ describe Bandwidth::AccountAPI do
       JSON
     ]}
 
-    assert_equal @bandwidth.account.balance, 538.3725
-    assert_equal @bandwidth.account.account_type, "pre-pay"
+    assert_equal 538.3725, @bandwidth.account.balance
+    assert_equal "pre-pay", @bandwidth.account.account_type
   end
 
   it "returns a list of transactions" do
@@ -44,16 +44,16 @@ describe Bandwidth::AccountAPI do
     ]}
 
     transactions = @bandwidth.transactions
-    assert_equal transactions.size, 2
+    assert_equal 2, transactions.size
 
     transaction = transactions.first
-    assert_equal transaction.id, "pptx-wqfnffduxiki4fd5ubhv77a"
-    assert_equal transaction.time, Time.parse("2013-02-21T13:39:09.122Z")
-    assert_equal transaction.amount, 0.00750
-    assert_equal transaction.type, "charge"
-    assert_equal transaction.units, "1"
-    assert_equal transaction.product_type, "sms-out"
-    assert_equal transaction.number, "+12345678910"
+    assert_equal "pptx-wqfnffduxiki4fd5ubhv77a", transaction.id
+    assert_equal Time.parse("2013-02-21T13:39:09.122Z"), transaction.time
+    assert_equal 0.00750, transaction.amount
+    assert_equal "charge", transaction.type
+    assert_equal "1", transaction.units
+    assert_equal "sms-out", transaction.product_type
+    assert_equal "+12345678910", transaction.number
   end
 
   it "filters by date" do
@@ -61,8 +61,8 @@ describe Bandwidth::AccountAPI do
     to = "2013-02-21T13:40:00Z"
 
     @bandwidth.stub.get("/account/transactions") do |request|
-      assert_equal request[:params]['fromDate'], from
-      assert_equal request[:params]['toDate'], to
+      assert_equal from, request[:params]['fromDate']
+      assert_equal to, request[:params]['toDate']
       [200, {}, "{}"]
     end
 
@@ -71,16 +71,16 @@ describe Bandwidth::AccountAPI do
 
   it "filters by payment type" do
     @bandwidth.stub.get("/account/transactions") do |request|
-      assert_equal request[:params]['type'], "auto-recharge"
+      assert_equal "auto-recharge", request[:params]['type']
       [200, {}, "{}"]
     end
 
-    transactions = @bandwidth.transactions type: Bandwidth::AccountAPI::AUTO_RECHARGE
+    transactions = @bandwidth.transactions type: Bandwidth::API::Account::AUTO_RECHARGE
   end
 
   it "limits the results" do
     @bandwidth.stub.get("/account/transactions") do |request|
-      assert_equal request[:params]['maxItems'], "1"
+      assert_equal "1", request[:params]['maxItems']
       [200, {}, "{}"]
     end
 

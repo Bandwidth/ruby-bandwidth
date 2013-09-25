@@ -1,10 +1,13 @@
+require 'faraday'
+require 'json'
+
 module Bandwidth
   class Connection
     def initialize user_id, token, secret
       @user_id, @token, @secret = user_id, token, secret
     end
 
-    include AccountAPI
+    include API::Account
 
   protected
     def get path, parameters={}

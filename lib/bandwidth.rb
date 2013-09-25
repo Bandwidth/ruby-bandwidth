@@ -1,10 +1,12 @@
-require 'faraday'
-require 'json'
-
-require 'bandwidth/hash_with_underscore_access'
+#require 'bandwidth/hash_with_underscore_access'
 require 'bandwidth/hash_camelizer'
 
-require "bandwidth/account_api"
+require "bandwidth/types/instance"
+require "bandwidth/types/account"
+require "bandwidth/types/transaction"
+
+require "bandwidth/api/account"
+
 require "bandwidth/connection"
 require "bandwidth/version"
 
