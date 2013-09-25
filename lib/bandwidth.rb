@@ -1,4 +1,3 @@
-#require 'bandwidth/hash_with_underscore_access'
 require 'bandwidth/hash_camelizer'
 
 require "bandwidth/types/instance"

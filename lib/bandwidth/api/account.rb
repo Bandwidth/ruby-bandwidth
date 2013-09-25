@@ -1,5 +1,3 @@
-require 'time'
-
 module Bandwidth
   module API
     module Account
