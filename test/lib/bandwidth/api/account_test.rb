@@ -75,7 +75,7 @@ describe Bandwidth::API::Account do
       [200, {}, "{}"]
     end
 
-    transactions = @bandwidth.transactions type: Bandwidth::API::Account::AUTO_RECHARGE
+    transactions = @bandwidth.transactions type: Bandwidth::API::Account::TransactionTypes::AUTO_RECHARGE
   end
 
   it "limits the results" do

@@ -3,7 +3,10 @@ module Bandwidth
     class Account
       include Instance
 
+      # @return [Float] Your account balance in dollars
       attribute :balance, Float
+
+      # @return [String] The type of account configured for your user
       attribute :account_type
     end
   end

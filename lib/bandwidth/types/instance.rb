@@ -4,11 +4,13 @@ require 'time'
 module Bandwidth
   class Types
     module Instance
+      # @api private
       def self.included base
         base.extend ClassMethods
         base.instance_variable_set :@attributes, {}
       end
 
+      # @api private
       def initialize parsed_json
         attributes = self.class.instance_variable_get :@attributes
         attributes.each do |attribute, coercion|
@@ -32,6 +34,7 @@ module Bandwidth
         end
       end
 
+      # @api private
       module ClassMethods
         def attribute name, coercion = nil
           @attributes[name] = coercion

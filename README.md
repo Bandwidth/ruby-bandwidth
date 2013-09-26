@@ -19,7 +19,7 @@ or add to your Gemfile:
 
     require 'bandwidth' # Optional, only unless you use Bundler to manage dependencies
 
-    USERID = "u-ku5k3kzhbf4nligdgweuqie" # Your user id
+    USER_ID = "u-ku5k3kzhbf4nligdgweuqie" # Your user id
     TOKEN  = "t-apseoipfjscawnjpraalksd" # Your account token
     SECRET = "6db9531b2794663d75454fb42476ddcb0215f28c" # Your secret
     bandwidth = Bandwidth.new USERID, TOKEN, SECRET
@@ -51,7 +51,7 @@ or add to your Gemfile:
 
 #### Filter by payment type
 
-    transactions = bandwidth.transactions type: Bandwidth::AccountAPI::AUTO_RECHARGE
+    transactions = bandwidth.transactions type: Bandwidth::API::Account::TransactionTypes::AUTO_RECHARGE
 
 Available payment types:
 

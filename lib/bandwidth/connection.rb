@@ -3,6 +3,8 @@ require 'json'
 
 module Bandwidth
   class Connection
+
+    # (see Bandwidth.new)
     def initialize user_id, token, secret
       @user_id, @token, @secret = user_id, token, secret
     end
@@ -55,6 +57,19 @@ module Bandwidth
       # TODO: handle status codes
       # TODO: handle deep structures and provide ruby's underscore keys for hashes. be lazy
       parsed = JSON.parse response.body
+    end
+
+    # @api private
+    class HashCamelizer
+      def initialize hash
+        @hash = hash
+      end
+
+      def each
+        @hash.each do |k, v|
+          yield k.to_s.camelcase(:lower), v
+        end
+      end
     end
   end
 end
