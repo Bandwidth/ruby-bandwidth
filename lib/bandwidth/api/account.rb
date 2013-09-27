@@ -6,7 +6,8 @@ module Bandwidth
       #
       # @return [Types::Account]
       def account
-        Types::Account.new get 'account'
+        body, _headers = get 'account'
+        Types::Account.new body
       end
 
       # Get the transactions from the user's Account
@@ -44,7 +45,7 @@ module Bandwidth
         options[:from_date] = options[:from_date].iso8601 if options[:from_date]
         options[:to_date] = options[:to_date].iso8601 if options[:to_date]
 
-        transactions = get 'account/transactions', options
+        transactions, _headers = get 'account/transactions', options
 
         transactions.map do |transaction|
           Types::Transaction.new transaction

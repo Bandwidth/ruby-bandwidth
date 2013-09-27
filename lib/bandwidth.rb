@@ -2,7 +2,11 @@ require "bandwidth/types/instance"
 require "bandwidth/types/account"
 require "bandwidth/types/transaction"
 
+require "bandwidth/errors/generic_error"
+require "bandwidth/errors/restricted_number"
+
 require "bandwidth/api/account"
+require "bandwidth/api/messages"
 
 require "bandwidth/connection"
 require "bandwidth/version"

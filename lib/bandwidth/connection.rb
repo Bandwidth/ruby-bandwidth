@@ -10,6 +10,7 @@ module Bandwidth
     end
 
     include API::Account
+    include API::Messages
 
   protected
     def get path, parameters={}
@@ -17,7 +18,13 @@ module Bandwidth
     end
 
     def post path, parameters={}
-      normalize_response connection.post url(path), camelcase(parameters)
+      response = connection.post do |req|
+        req.url url path
+        req.headers['Content-Type'] = 'application/json'
+        req.body = camelcase(parameters).to_json
+      end
+
+      normalize_response response
     end
 
     def put path, parameters={}
@@ -47,16 +54,25 @@ module Bandwidth
     def connect
       Faraday.new do |faraday|
         faraday.request  :url_encoded             # form-encode POST params
-        # TODO: use something more advanced adapter when possible
+        # TODO: use more advanced adapter when possible
         faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
         faraday.basic_auth @token, @secret
       end
     end
 
     def normalize_response response
-      # TODO: handle status codes
       # TODO: handle deep structures and provide ruby's underscore keys for hashes. be lazy
-      parsed = JSON.parse response.body
+      parsed_body = JSON.parse response.body if response.body.size > 1
+
+      if response.status >= 400
+        if parsed_body['code'] == 'restricted-number'
+          fail Errors::RestrictedNumber.new parsed_body['message']
+        else
+          fail Errors::GenericError.new parsed_body['code'], parsed_body['message']
+        end
+      end
+
+      return parsed_body, response.headers
     end
 
     # @api private
