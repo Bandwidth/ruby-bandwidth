@@ -31,4 +31,85 @@ describe Bandwidth::API::Account do
       @bandwidth.send_message("+19195555555", "+13125555555", "Test message")
     end
   end
+
+  it "gets a message by id" do
+    message_id = "m-6usiz7e7tsjjafn5htk5huy"
+
+    @bandwidth.stub.get("/messages/#{message_id}") {[200, {}, <<-JSON
+      {
+        "id": "m-6usiz7e7tsjjafn5htk5huy",
+        "messageId": "m-6usiz7e7tsjjafn5htk5huy",
+        "from": "+19195551212",
+        "to": "+13125556666",
+        "text": "Good morning, this is a test message",
+        "time": "2012-10-05T20:37:38.048Z",
+        "direction": "out",
+        "state": "sent"
+      }
+      JSON
+    ]}
+
+    message = @bandwidth.message message_id
+
+    assert_equal message_id, message.id
+    assert_equal "out", message.direction
+    assert_equal "+19195551212", message.from
+    assert_equal "+13125556666", message.to
+    assert_equal "sent", message.state
+    assert_equal Time.parse("2012-10-05T20:37:38.048Z"), message.time
+    assert_equal "Good morning, this is a test message", message.text
+  end
+
+  it "gets a list of messages" do
+    @bandwidth.stub.get("/messages") {[200, {}, <<-JSON
+      [
+        {
+          "id": "m-6usiz7e7tsjjafn5htk5huy",
+          "messageId": "m-6usiz7e7tsjjafn5htk5huy",
+          "from": "+19195551212",
+          "to": "+13125556666",
+          "text": "Good morning, this is a test message",
+          "time": "2012-10-05T20:37:38.048Z",
+          "direction": "out",
+          "state": "sent"
+        },
+        {
+          "id": "m-ysgivd4qyxylwgs6mvyg6oy",
+          "messageId": "m-ysgivd4qyxylwgs6mvyg6oy",
+          "from": "+13125556666",
+          "to": "+19195551212",
+          "text": "I received your test message",
+          "time": "2012-10-05T20:38:11.023Z",
+          "direction": "in",
+          "state": "sent"
+        }
+      ]
+      JSON
+    ]}
+
+    messages = @bandwidth.messages
+    assert_equal 2, messages.size
+  end
+
+  it "filters list of messages by sender" do
+    sender = "+19195551212"
+
+    @bandwidth.stub.get("/messages") do |request|
+      assert_equal sender, request[:params]['from']
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.messages from: sender
+  end
+
+  it "filters list of messages by recipient" do
+    recipient = "+13125556666"
+
+    @bandwidth.stub.get("/messages") do |request|
+      assert_equal recipient, request[:params]['to']
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.messages to: recipient
+  end
 end

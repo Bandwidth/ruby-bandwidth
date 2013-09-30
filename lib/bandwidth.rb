@@ -1,6 +1,7 @@
 require "bandwidth/types/instance"
 require "bandwidth/types/account"
 require "bandwidth/types/transaction"
+require "bandwidth/types/message"
 
 require "bandwidth/errors/generic_error"
 require "bandwidth/errors/restricted_number"
