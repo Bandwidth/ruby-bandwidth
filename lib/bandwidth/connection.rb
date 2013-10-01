@@ -1,6 +1,8 @@
 require 'faraday'
 require 'json'
 
+require 'active_support//core_ext/module/delegation'
+
 module Bandwidth
   class Connection
 
@@ -12,67 +14,88 @@ module Bandwidth
     include API::Account
     include API::Messages
 
+    # @api private
+    # FIXME: ugly. should be fixed in REST API to keep URLs consistent
+    def short_http
+      @short_http ||= HTTP::Short.new
+    end
+
+    delegate :get, :post, :put, :delete, to: :http
+
   protected
-    def get path, parameters={}
-      normalize_response connection.get url(path), camelcase(parameters)
+
+    def http
+      @http ||= HTTP.new
     end
 
-    def post path, parameters={}
-      response = connection.post do |req|
-        req.url url path
-        req.headers['Content-Type'] = 'application/json'
-        req.body = camelcase(parameters).to_json
+    class HTTP
+      def get path, parameters={}
+        normalize_response connection.get url(path), camelcase(parameters)
       end
 
-      normalize_response response
-    end
+      def post path, parameters={}
+        response = connection.post do |req|
+          req.url url path
+          req.headers['Content-Type'] = 'application/json'
+          req.body = camelcase(parameters).to_json
+        end
 
-    def put path, parameters={}
-      normalize_response connection.put url(path), camelcase(parameters)
-    end
-
-    def delete path, parameters={}
-      normalize_response connection.delete url(path), camelcase(parameters)
-    end
-
-  private
-    API_ENDPOINT = 'https://api.catapult.inetwork.com'
-    API_VERSION = 'v1'
-
-    def camelcase hash
-      HashCamelizer.new hash
-    end
-
-    def url path
-      [API_ENDPOINT, API_VERSION, 'users', @user_id, path].join '/'
-    end
-
-    def connection
-      @connection ||= connect
-    end
-
-    def connect
-      Faraday.new do |faraday|
-        faraday.request  :url_encoded             # form-encode POST params
-        # TODO: use more advanced adapter when possible
-        faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
-        faraday.basic_auth @token, @secret
+        normalize_response response
       end
-    end
 
-    def normalize_response response
-      # TODO: handle deep structures and provide ruby's underscore keys for hashes. be lazy
-      parsed_body = JSON.parse response.body if response.body.size > 1
+      def put path, parameters={}
+        normalize_response connection.put url(path), camelcase(parameters)
+      end
 
-      if response.status >= 400
-        if parsed_body['code'] == 'restricted-number'
-          fail Errors::RestrictedNumber.new parsed_body['message']
-        else
-          fail Errors::GenericError.new parsed_body['code'], parsed_body['message']
+      def delete path, parameters={}
+        normalize_response connection.delete url(path), camelcase(parameters)
+      end
+
+    protected
+      API_ENDPOINT = 'https://api.catapult.inetwork.com'
+      API_VERSION = 'v1'
+
+      def camelcase hash
+        HashCamelizer.new hash
+      end
+
+      def url path
+        [API_ENDPOINT, API_VERSION, 'users', @user_id, path].join '/'
+      end
+
+      def connection
+        @connection ||= connect
+      end
+
+      def connect
+        Faraday.new do |faraday|
+          faraday.request  :url_encoded             # form-encode POST params
+          # TODO: use more advanced adapter when possible
+          faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
+          faraday.basic_auth @token, @secret
         end
       end
 
-      return parsed_body, response.headers
+      def normalize_response response
+        # TODO: handle deep structures and provide ruby's underscore keys for hashes. be lazy
+        parsed_body = JSON.parse response.body if response.body.size > 1
+
+        if response.status >= 400
+          if parsed_body['code'] == 'restricted-number'
+            fail Errors::RestrictedNumber.new parsed_body['message']
+          else
+            fail Errors::GenericError.new parsed_body['code'], parsed_body['message']
+          end
+        end
+
+        return parsed_body, response.headers
+      end
+
+      class Short
+        def url path
+          [API_ENDPOINT, API_VERSION, path].join '/'
+        end
+      end
     end
 
     # @api private

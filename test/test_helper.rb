@@ -8,18 +8,28 @@ require_relative '../lib/bandwidth.rb'
 
 module Bandwidth
   class StubbedConnection < Connection
-    def connection
-      @connection ||= Faraday.new do |faraday|
-        faraday.adapter :test, @stubs
+    def http
+      @http ||= StubbedHttp.new
+    end
+
+    alias :short_http :http
+
+    delegate :stub, to: :http
+
+    class StubbedHttp < HTTP
+      def connection
+        @connection ||= Faraday.new do |faraday|
+          faraday.adapter :test, @stubs
+        end
       end
-    end
 
-    def url path
-      path
-    end
+      def url path
+        path
+      end
 
-    def stub
-      @stubs ||= Faraday::Adapter::Test::Stubs.new
+      def stub
+        @stubs ||= Faraday::Adapter::Test::Stubs.new
+      end
     end
   end
 end
