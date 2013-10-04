@@ -13,6 +13,7 @@ module Bandwidth
 
     include API::Account
     include API::Messages
+    include API::AvailableNumbers
 
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent

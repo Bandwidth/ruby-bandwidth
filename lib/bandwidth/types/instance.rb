@@ -2,7 +2,7 @@ require 'active_support/core_ext/string/inflections'
 require 'time'
 
 module Bandwidth
-  class Types
+  module Types
     module Instance
       # @api private
       def self.included base

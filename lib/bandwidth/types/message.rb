@@ -1,5 +1,5 @@
 module Bandwidth
-  class Types
+  module Types
     class Message
       include Instance
 

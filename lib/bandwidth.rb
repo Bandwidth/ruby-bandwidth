@@ -2,12 +2,14 @@ require "bandwidth/types/instance"
 require "bandwidth/types/account"
 require "bandwidth/types/transaction"
 require "bandwidth/types/message"
+require "bandwidth/types/phone_number"
 
 require "bandwidth/errors/generic_error"
 require "bandwidth/errors/restricted_number"
 
 require "bandwidth/api/account"
 require "bandwidth/api/messages"
+require "bandwidth/api/available_numbers"
 
 require "bandwidth/connection"
 require "bandwidth/version"

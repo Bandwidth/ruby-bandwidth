@@ -1,9 +1,8 @@
-# ruby-bandwidth
+# Bandwidth Ruby API
 
 Gem for integrating to Bandwidth's Telephony API
 
-
-## Installation
+# Installation
 
 Via rubygems:
 
@@ -13,25 +12,35 @@ or add to your Gemfile:
 
     gem 'bandwidth'
 
-## Usage
+# Usage
 
-### Basic
+## Basic
 
-    require 'bandwidth' # Optional, only unless you use Bundler to manage dependencies
+See {Bandwidth}
+
+Optional, only unless you use Bundler to manage dependencies:
+
+    require "bandwidth"
+
+Initialize API access object and connect to your account data:
 
     USER_ID = "u-ku5k3kzhbf4nligdgweuqie" # Your user id
     TOKEN  = "t-apseoipfjscawnjpraalksd" # Your account token
     SECRET = "6db9531b2794663d75454fb42476ddcb0215f28c" # Your secret
     bandwidth = Bandwidth.new USERID, TOKEN, SECRET
 
-### Account
+## Account
+
+See {Bandwidth::API::Account} and {Bandwidth::Types::Account}
 
     bandwidth.account.balance # => 538.3725
     bandwidth.account.account_type # => "pre-pay"
 
-See {Bandwidth::API::Account} and {Bandwidth::Types::Account}
+## Transactions
 
-### Transactions
+See {Bandwidth::API::Account} and {Bandwidth::Types::Transaction}
+
+### Get a list of transactions
 
     transactions = bandwidth.transactions # => [#<Transaction:0xb642ffc>, #<Transaction:0xb642fe8>]
     example_transaction = transactions.first
@@ -63,16 +72,14 @@ See {Bandwidth::API::Account} and {Bandwidth::Types::Account}
     # Used for pagination to indicate the size of each page requested for querying a list of transactions. If no value is specified the default value is 25. (Maximum value 1000)
     example_transaction.size
 
-See {Bandwidth::API::Account} and {Bandwidth::Types::Transaction}
-
-#### Filter by time period
+### Filter by time period
 
     from = "2013-02-21T13:38:00Z"
     to = "2013-02-21T13:40:00Z"
 
     transactions = bandwidth.transactions from_date: Time.parse(from), to_date: Time.parse(to)
 
-#### Filter by payment type
+### Filter by payment type
 
     transactions = bandwidth.transactions type: Bandwidth::API::Account::TransactionTypes::AUTO_RECHARGE
 
@@ -80,13 +87,15 @@ Available payment types:
 
     CHARGE, PAYMENT, CREDIT, AUTO_RECHARGE
 
-#### Limit quantity
+### Limit quantity
 
     transactions = bandwidth.transactions max_items: 5 # Will return maximum 5 transactions
 
-### Messages
+## Messages
 
-#### Send text messages
+See {Bandwidth::API::Messages} and {Bandwidth::Types::Message}
+
+### Send text messages
 
     from = "+19195551212"
     to = "+13125556666"
@@ -94,7 +103,7 @@ Available payment types:
 
     message_id = bandwidth.send_message from, to, text
 
-#### Get message
+### Get message
 
     message = bandwidth.message message_id
 
@@ -127,17 +136,30 @@ Available payment types:
     # Used for pagination to indicate the size of each page requested for querying a list of messages. If no value is specified the default value is 25. (Maximum value 1000)   messa
     message.size
 
-#### Get a list of messages
+### Get a list of messages
 
     messages = bandwidth.messages # => [#<Message:0xb642ffc>, #<Message:0xb642fe8>]
 
-#### Get a list of messages filtering by sender or/and recipient
+### Get a list of messages filtering by sender or/and recipient
 
     messages = bandwidth.messages from: "+19195551212", to:"+13125556666" # => [#<Message:0xa8526e0>, #<Message:0xa85ee7c>]
 
-See {Bandwidth::API::Messages} and {Bandwidth::Types::Message}
+## Available phone numbers
 
-Useful links
-============
+Lets you search for numbers that are available for use with your application.
+
+### Local
+
+Searches for available local numbers by location or pattern criteria.
+
+    bandwidth.available_numbers # => [#<PhoneNumber:+19195551212>, #<PhoneNumber:+13125556666>, ...]
+
+### Toll freme
+
+Searches for available Toll Free numbers.
+
+    bandwidth.available_toll_free_numbers # => [#<PhoneNumber:+19195551212>, #<PhoneNumber:+13125556666>, ...]
+
+# Useful links
 
 Original api docs: https://catapult.inetwork.com/docs/
