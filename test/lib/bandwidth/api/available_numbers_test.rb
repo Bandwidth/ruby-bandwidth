@@ -69,4 +69,97 @@ describe Bandwidth::API::AvailableNumbers do
     assert_equal "        2  9  ", number.pattern_match
     assert_equal 2.00, number.price
   end
+
+  it "passes filtering to available numbers: zip" do
+    zip = "12345"
+
+    @bandwidth.stub.get('/availableNumbers/local') do |request|
+      assert_equal zip, request[:params]['zip']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_numbers zip: zip
+  end
+
+  it "passes filtering to available numbers: state" do
+    state = "CA"
+
+    @bandwidth.stub.get('/availableNumbers/local') do |request|
+      assert_equal state, request[:params]['state']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_numbers state: state
+  end
+
+  it "passes filtering to available numbers: area code" do
+    area_code = "919"
+
+    @bandwidth.stub.get('/availableNumbers/local') do |request|
+      assert_equal area_code, request[:params]['areaCode']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_numbers area_code: area_code
+  end
+
+  it "passes filtering to available numbers: city" do
+    city = "Cary"
+
+    @bandwidth.stub.get('/availableNumbers/local') do |request|
+      assert_equal city, request[:params]['city']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_numbers city: city
+  end
+
+  it "passes filtering to available numbers: pattern" do
+    pattern = "*2?9*"
+
+    @bandwidth.stub.get('/availableNumbers/local') do |request|
+      assert_equal pattern, request[:params]['pattern']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_numbers pattern: pattern
+  end
+
+  it "passes filtering to available toll free numbers: pattern" do
+    pattern = "*2?9*"
+
+    @bandwidth.stub.get('/availableNumbers/tollFree') do |request|
+      assert_equal pattern, request[:params]['pattern']
+
+      [200, {}, "{}"]
+    end
+
+    @bandwidth.available_toll_free_numbers pattern: pattern
+  end
+
+  it "raises exception when more than one of: zip, state or area code is passed" do
+    assert_raises ArgumentError, "ZIP code, state and area code are mutually exclusive" do
+      @bandwidth.available_numbers zip: '12345', state: 'NY'
+    end
+    assert_raises ArgumentError, "ZIP code, state and area code are mutually exclusive" do
+      @bandwidth.available_numbers zip: '12345', area_code: '919'
+    end
+    assert_raises ArgumentError, "ZIP code, state and area code are mutually exclusive" do
+      @bandwidth.available_numbers state: 'CA', area_code: '919'
+    end
+  end
+
+  it "raises exception when there are incompatible options" do
+    assert_raises ArgumentError, "Unknown option passed: [:unknown_option]" do
+      @bandwidth.available_numbers unknown_option: 'some value'
+    end
+    assert_raises ArgumentError, "Unknown option passed: [:unknown_option]" do
+      @bandwidth.available_toll_free_numbers unknown_option: 'some value'
+    end
+  end
 end

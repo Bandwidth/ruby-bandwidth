@@ -148,17 +148,43 @@ See {Bandwidth::API::Messages} and {Bandwidth::Types::Message}
 
 Lets you search for numbers that are available for use with your application.
 
+See {Bandwidth::API::AvailableNumbers}, {Bandwidth::Types::PhoneNumber} and {Bandwidth::Types::LocalPhoneNumber}
+
 ### Local
 
 Searches for available local numbers by location or pattern criteria.
 
-    bandwidth.available_numbers # => [#<PhoneNumber:+19195551212>, #<PhoneNumber:+13125556666>, ...]
+    bandwidth.available_numbers # => [#<LocalPhoneNumber:+19195551212>, #<LocalPhoneNumber:+13125556666>, ...]
 
-### Toll freme
+#### Filter by state, ZIP code or area code
+
+You can filter by one of those criterias:
+
+    bandwidth.available_numbers zip: '12345'
+
+    bandwidth.available_numbers state: 'CA'
+
+    bandwidth.available_numbers area_code: '919'
+
+#### Filter by city
+
+You can additionally specify a city:
+
+    bandwidth.available_numbers state: 'NC', city: 'Cary'
+
+#### Filter phone number by pattern
+
+    bandwidth.available_numbers pattern: "*2?9*" # => [#<LocalPhoneNumber:+19192972393>, ...]
+
+### Toll free
 
 Searches for available Toll Free numbers.
 
     bandwidth.available_toll_free_numbers # => [#<PhoneNumber:+19195551212>, #<PhoneNumber:+13125556666>, ...]
+
+#### Filter phone number by pattern
+
+    bandwidth.available_toll_free_numbers pattern: "*2?9*" # => [#<PhoneNumber:+18557626967>, #<PhoneNumber:+18557712996>]
 
 # Useful links
 
