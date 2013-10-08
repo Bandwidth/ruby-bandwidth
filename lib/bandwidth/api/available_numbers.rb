@@ -32,7 +32,7 @@ module Bandwidth
         raise ArgumentError, "ZIP code, state and area code are mutually exclusive" if (options.keys & MUTUALLY_EXCLUSIVE_OPTIONS).size > 1
         raise ArgumentError, "Unknown option passed: #{options.keys - OPTIONS}" if (options.keys - OPTIONS).size > 0
 
-        numbers, _headers = get 'availableNumbers/local', options
+        numbers, _headers = short_http.get 'availableNumbers/local', options
 
         numbers.map do |number|
           Types::LocalPhoneNumber.new number
@@ -55,7 +55,7 @@ module Bandwidth
       def available_toll_free_numbers options = {}
         raise ArgumentError, "Unknown option passed: #{options.keys - OPTIONS}" if (options.keys - OPTIONS).size > 0
 
-        numbers, _headers = get 'availableNumbers/tollFree', options
+        numbers, _headers = short_http.get 'availableNumbers/tollFree', options
 
         numbers.map do |number|
           Types::PhoneNumber.new number
