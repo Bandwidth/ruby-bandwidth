@@ -39,6 +39,11 @@ module Bandwidth
         def attribute name, coercion = nil
           @attributes[name] = coercion
         end
+
+        def inherited base
+          attributes = self.instance_variable_get :@attributes
+          base.instance_variable_set :@attributes, attributes
+        end
       end
     end
   end
