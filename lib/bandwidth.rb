@@ -10,6 +10,7 @@ require "bandwidth/errors/restricted_number"
 require "bandwidth/api/account"
 require "bandwidth/api/messages"
 require "bandwidth/api/available_numbers"
+require "bandwidth/api/phone_numbers"
 
 require "bandwidth/connection"
 require "bandwidth/version"

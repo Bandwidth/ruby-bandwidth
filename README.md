@@ -186,6 +186,47 @@ Searches for available Toll Free numbers.
 
     bandwidth.available_toll_free_numbers pattern: "*2?9*" # => [#<PhoneNumber:+18557626967>, #<PhoneNumber:+18557712996>]
 
+## Phone numbers
+
+Lets you get phone numbers and manage numbers you already have
+
+See {Bandwidth::API::PhoneNumbers} and {Bandwidth::Types::AllocatedPhoneNumber}
+
+### List allocated numbers
+
+Get a list of allocated numbers
+
+    numbers = bandwidth.phone_numbers # => [#<AllocatedPhoneNumber:+19195551212>, #<AllocatedPhoneNumber:+13125556666>, ...]
+
+    number = numbers.first
+
+    # Phone number identifier
+    number.id # => "n-6nuymbplrb3zd5yazve2ley"
+
+    # Phone number in E.164 format
+    number.number # => "+19195551212"
+
+    # Phone number in human readable format
+    number.national_number # => "(919) 555-1212"
+
+    # Custom name
+    number.name # => "home phone"
+
+    # State
+    number.state # => "NC"
+
+### Allocate a number
+
+    number_id = bandwidth.allocate_number "+19195551212"
+
+### Check allocated phone number details
+
+    bandwidth.phone_number_details # => #<AllocatedPhoneNumber:+19195551212>
+
+### Remove a number from account
+
+    bandwidth.remove_number number_id
+
 # Useful links
 
 Original api docs: https://catapult.inetwork.com/docs/

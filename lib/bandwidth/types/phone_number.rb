@@ -9,6 +9,7 @@ module Bandwidth
       # @return [String] The phone number in human national format ((919) 297-2393)
       attribute :national_number
 
+      # FIXME: extract this field so that it appears only in pattern searches
       # @return [String] The matched pattern in case of pattern search ("          2 9 ")
       attribute :pattern_match
 
@@ -22,6 +23,14 @@ module Bandwidth
 
       # @return [String] The state
       attribute :state
+    end
+
+    class AllocatedPhoneNumber < LocalPhoneNumber
+      # @return [String] Unique identifier
+      attribute :id
+
+      # @return [String] The name for this number
+      attribute :name
     end
   end
 end

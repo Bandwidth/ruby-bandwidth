@@ -41,7 +41,9 @@ module Bandwidth
       # @return [Array<Types::Message>]
       #
       # @example Getting a list of messages
-      #   bandwidth.messages # => [#<Message:0xb642ffc>, #<Message:0xb642fe8>]
+      #   messages = bandwidth.messages # => [#<Message:0xb642ffc>, #<Message:0xb642fe8>]
+      #
+      #   message = messages.first
       #
       #   message.direction # => "out"
       #   message.from # => "+19195551212"
