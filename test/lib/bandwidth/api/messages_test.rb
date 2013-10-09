@@ -13,6 +13,26 @@ describe Bandwidth::API::Account do
     assert_equal message_id, @bandwidth.send_message("+19195555555", "+13125555555", "Test message")
   end
 
+  it "sets message parameters" do
+    message_id = "m-6usiz7e7tsjjafn5htk5huy"
+
+    from = "+19195555555"
+    to = "+13125555555"
+    text = "Test message"
+
+    @bandwidth.stub.post('/messages') do |request|
+      parsed_body = JSON.parse request[:body]
+
+      assert_equal from, parsed_body['from']
+      assert_equal to, parsed_body['to']
+      assert_equal text, parsed_body['text']
+
+      [201, {location: "https://api.catapult.inetwork.com/v1/users/user_id/messages/#{message_id}"}, ""]
+    end
+
+    @bandwidth.send_message from, to, text
+  end
+
   it "handles restricted-number return code on send" do
     @bandwidth.stub.post('/messages') {[403, {}, <<-JSON
       {

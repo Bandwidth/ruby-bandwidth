@@ -1,7 +1,8 @@
 require 'faraday'
 require 'json'
 
-require 'active_support//core_ext/module/delegation'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/string/inflections'
 
 module Bandwidth
   class Connection
@@ -14,6 +15,7 @@ module Bandwidth
     include API::Account
     include API::Messages
     include API::AvailableNumbers
+    include API::PhoneNumbers
 
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent
@@ -109,6 +111,12 @@ module Bandwidth
         @hash.each do |k, v|
           yield k.to_s.camelcase(:lower), v
         end
+      end
+
+      def to_json *a
+        hash = {}
+        self.each {|k, v| hash[k] = v}
+        hash.to_json *a
       end
     end
   end
