@@ -37,13 +37,13 @@ describe Bandwidth::API::Account do
     @bandwidth.stub.post('/messages') {[403, {}, <<-JSON
       {
         "category": "forbidden",
-         "code": "restricted-number",
-         "message": "The number +19195555555 is restricted and cannot be used to send message.",
-         "details": [
-           {"name": "requestMethod", "value": "POST"},
-           {"name": "requestPath", "value": "users/user_id/messages"}
-         ]
-       }
+        "code": "restricted-number",
+        "message": "The number +19195555555 is restricted and cannot be used to send message.",
+        "details": [
+          {"name": "requestMethod", "value": "POST"},
+          {"name": "requestPath", "value": "users/user_id/messages"}
+        ]
+      }
       JSON
     ]}
 

@@ -29,6 +29,8 @@ module Bandwidth
           value
         elsif coercion == Float
           value.to_f
+        elsif coercion == Integer
+          value.to_i
         elsif coercion == Time
           Time.parse value
         end

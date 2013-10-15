@@ -227,6 +227,184 @@ Get a list of allocated numbers
 
     bandwidth.remove_number number_id
 
+## Calls
+
+Lets you make phone calls and view information about previous inbound and outbound calls
+
+See {Bandwidth::API::Calls}, {Bandwidth::Types::Call}, {Bandwidth::Types::DTMF}, {Bandwidth::Types::Record}, {Bandwidth::Audio::Sentence} and {Bandwidth::Audio::File}
+
+### List previous calls that were made or received
+
+Gets a list of active and historic calls you made or received
+
+    calls = bandwidth.calls # => [#<Call:0x9906e34>, ...]
+    call = calls.first
+
+    # Call unique ID
+    call.id # => "c-clgsmnrn4ruwdx36rxf7zoi"
+
+    # Call direction (in: incoming Call, out: outgoing Call)
+    call.direction # => "out"
+
+    # Caller ID
+    call.from # => "+19195551212"
+
+    # Called ID
+    call.to # => "+13125556666"
+
+    # Call state
+    call.state # => "completed"
+
+    # Date when the call was created
+    call.startTime # => 2013-02-08 13:15:47 UTC
+
+    # Date when the call was answered
+    call.activeTime # => 2013-02-08 13:15:52 UTC
+
+    # Date when the call ended
+    call.endTime # => 2013-02-08 13:15:55 UTC
+
+    # Chargable call duration (seconds between activeTime and endTime)
+    call.chargeableDuration # => 60
+
+#### Filtering calls
+
+You can filter by any combination of caller, callee, bridge id and conference id:
+
+    bandwidth.calls from: "+19195551212"
+
+    bandwidth.calls from: "+19195551212", to: "+13125556666"
+
+    bandwidth.calls bridge_id: "brg-72x6e5d6gbthaw52vcsouyq"
+
+    bandwidth.calls conference_id: "conf-7qrj2t3lfixl4cgjcdonkna"
+
+### Make a phone call
+
+    call_id = bandwidth.dial "+19195551212", "+13125556666"
+
+#### Recording call
+
+This will make a call and start recording immediately:
+
+    call_id = bandwidth.dial "+19195551212", "+13125556666", recording_enabled: true
+
+#### Bridging a call
+
+This will create a call in a bridge:
+
+    bridge_id = "brg-72x6e5d6gbthaw52vcsouyq"
+    call_id = bandwidth.dial "+19195551212", "+13125556666", bridge_id: bridge_id
+
+### Get information about a call that was made or received
+
+Gets information about an active or completed call
+
+    call = bandwidth.call_info "c-xytsl6nfcayzsxdbqq7q36i"
+
+### Make changes to an active phone call
+
+Changes properties of an active phone call
+
+#### Hang up
+
+    bandwidth.hangup "c-xytsl6nfcayzsxdbqq7q36i"
+
+#### Transfer
+
+    bandwidth.transfer "c-xytsl6nfcayzsxdbqq7q36i", "+19195551212"
+
+It's also possible to set caller id:
+
+    bandwidth.transfer "c-xytsl6nfcayzsxdbqq7q36i", "+19195551212", transfer_caller_id: "+19195553131"
+
+and/or play audio file or speak some text:
+
+    audio = Bandwidth::Audio::Sentence.new "Call has been transferred"
+    bandwidth.transfer "c-xytsl6nfcayzsxdbqq7q36i", "+19195551212", audio: audio
+
+#### Set recording state
+
+To start recording:
+
+    bandwidth.recording_state "c-xytsl6nfcayzsxdbqq7q36i", true
+
+### Play an audio or speak a sentence in a call
+
+Plays an audio file or speak a sentence in a phone call
+
+    sentence = Bandwidth::Audio::Sentence.new "Hello, thank you for calling."
+    audio_file = Bandwidth::Audio::File.new "http://example.com/audio.mp3"
+
+    bandwidth.play call_id, sentence
+    bandwidth.play call_id, audio_file
+
+#### Sentence options
+
+You can set a locale and gender (default is female):
+
+    audio = Bandwidth::Audio::Sentence.new "Guten Tag",
+      locale: Bandwidth::Audio::Sentence::LOCALE_DE,
+      gender: Bandwidth::Audio::Sentence::MALE
+
+    bandwidth.play audio
+
+#### General options
+
+You can play audio in a loop:
+
+    audio = Bandwidth::Audio::File.new "http://example.com/audio.mp3", loop_enabled: true
+    bandwidth.play audio
+
+### Send DTMF
+
+Send DTMF to the call
+
+    bandwidth.dtmf call_id, "1234"
+
+### Wait until the specified number of DTMF digits are pressed
+
+    dtmf = bandwidth.gather call_id
+    dtmf.digits # => "*123#"
+
+#### Options
+
+You can specify options.
+
+The maximum number of digits to collect, not including terminating digits (maximum 30)
+
+    dtmf = bandwidth.gather call_id, max_digits: 3
+
+Stop gathering if a DTMF digit is not detected in this many seconds (default 5.0; maximum 30.0)
+
+    dtmf = bandwidth.gather call_id, inter_digit_timeout: 10
+
+A string of DTMF digits that end the gather operation immediately if any one of them is detected (default "#"; an empty string means collect all DTMF until maxDigits or the timeout).
+The gather ends if either 0, #, or * is detected:
+
+    dtmf = bandwidth.gather call_id, terminating_digits: "0#*"
+
+A string you choose that will be included with the response and events for this gather operation
+
+    dtmf = bandwidth.gather call_id, tag: 'abc123'
+
+Plays or speaks to a call when gathering DTMF.
+Note a specical bargeable parameter to interrupt prompt (audio or sentence) at first digit gathered (default is true).
+
+    audio = Bandwidth::Audio::File.new "http://example.com/audio.mp3", bargeable: false
+    dtmf = bandwidth.gather call_id, audio: audio
+
+### Retrieve all recordings related to the call
+
+    records = bandwidth.records call_id
+    record = records.first
+
+    record.id # => "rec-togfrwqp2bxxezstzbzadra"
+    record.media # => "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-1.wav"
+    record.start_time # => 2013-02-08 12:05:17 UTC
+    record.end_time # => 2013-02-08 13:15:55 UTC
+    record.state # => "complete"
+
 # Useful links
 
 Original api docs: https://catapult.inetwork.com/docs/
