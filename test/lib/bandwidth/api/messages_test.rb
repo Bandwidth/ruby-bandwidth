@@ -1,6 +1,6 @@
 require_relative '../../../test_helper'
 
-describe Bandwidth::API::Account do
+describe Bandwidth::API::Messages do
   before do
     @bandwidth = Bandwidth::StubbedConnection.new 'user_id', 'token', 'secret'
   end

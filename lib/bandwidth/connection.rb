@@ -17,6 +17,7 @@ module Bandwidth
     include API::AvailableNumbers
     include API::PhoneNumbers
     include API::Calls
+    include API::Media
 
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent
@@ -24,7 +25,7 @@ module Bandwidth
       @short_http ||= HTTP::Short.new
     end
 
-    delegate :get, :post, :put, :delete, to: :http
+    delegate :get, :get_raw, :post, :put, :put_with_body, :delete, to: :http
 
   protected
 
@@ -35,6 +36,11 @@ module Bandwidth
     class HTTP
       def get path, parameters={}
         normalize_response connection.get url(path), camelcase(parameters)
+      end
+
+      def get_raw path, parameters={}
+        response = connection.get url(path), camelcase(parameters)
+        return response.body, response.headers
       end
 
       def post path, parameters={}
@@ -49,6 +55,16 @@ module Bandwidth
 
       def put path, parameters={}
         normalize_response connection.put url(path), camelcase(parameters)
+      end
+
+      def put_with_body path, body
+        response = connection.put do |req|
+          req.url url path
+          req.headers['Content-Length'] = body.size
+          req.body = body
+        end
+
+        normalize_response response
       end
 
       def delete path, parameters={}

@@ -405,6 +405,40 @@ Note a specical bargeable parameter to interrupt prompt (audio or sentence) at f
     record.end_time # => 2013-02-08 13:15:55 UTC
     record.state # => "complete"
 
+## Media
+
+Media API lets you upload your media files to Bandwidth servers so they can be used in scripts without requiring a separate hosting provider. You can upload files up to 50 MB and file storage is free for an unlimited number of files.
+These files are not available for public download. Media files include all call recordings.
+
+See {Bandwidth::API::Media} and {Bandwidth::Types::Medium}
+
+### Get a list of your media files
+
+    media = bandwidth.media # => [#<Medium:0xa3e7948>, ...]
+
+    medium = media.first
+    medium.content_length # => 2703360
+    medium.media_name # => "mysong.mp3"
+
+### Uploads a media file to the name you choose
+
+    bandwidth.upload "greeting.mp3", file.new("greeting.mp3")
+
+    bandwidth.upload "greeting.mp3", stringio.new(some_binary_data_here)
+
+### Download media file
+
+    data = bandwidth.download "mysong.mp3"
+
+### Permanently deletes a media file you uploaded
+
+    bandwidth.delete_media "greeting.mp3"
+
+## Recordings
+
+Retrieve call recordings, filtering by Id, user and/or calls.
+The recording information retrieved by GET method contains only textual data related to call recording as described on Properties section. To properly work with recorded media content such as download and removal of media file, please access Media documentation.
+
 # Useful links
 
 Original api docs: https://catapult.inetwork.com/docs/
