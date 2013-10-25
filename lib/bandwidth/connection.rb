@@ -18,6 +18,9 @@ module Bandwidth
     include API::PhoneNumbers
     include API::Calls
     include API::Media
+    include API::Records
+    include API::Bridges
+    include API::Conferences
 
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent

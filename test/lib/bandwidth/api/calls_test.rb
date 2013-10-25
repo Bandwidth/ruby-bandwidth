@@ -449,7 +449,7 @@ describe Bandwidth::API::Calls do
   it "retrieves all recordings related to the call" do
     call_id = "c-alsnbemjc6mvjhefjdngptq"
     record_id = "rec-togfrwqp2bxxezstzbzadra"
-    media_path = "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-1.wav"
+    media_id = "c-j4gferrrn72ivf3ov56ccay-1.wav"
     end_time = "2013-02-08T12:06:55.007Z"
     start_time = "2013-02-08T12:05:17.807Z"
 
@@ -458,7 +458,7 @@ describe Bandwidth::API::Calls do
         {
           "endTime": "#{end_time}",
           "id": "#{record_id}",
-          "media": "#{media_path}",
+          "media": "https://.../v1/users/.../media/#{media_id}",
           "startTime": "#{start_time}",
           "state": "complete"
         },
@@ -473,14 +473,14 @@ describe Bandwidth::API::Calls do
       JSON
     ]}
 
-    records = @bandwidth.records call_id
+    records = @bandwidth.call_records call_id
     assert_equal 2, records.size
 
     record = records.first
     assert_equal Time.parse(end_time), record.end_time
     assert_equal Time.parse(start_time), record.start_time
     assert_equal record_id, record.id
-    assert_equal media_path, record.media
+    assert_equal media_id, record.media
     assert_equal "complete", record.state
   end
 end

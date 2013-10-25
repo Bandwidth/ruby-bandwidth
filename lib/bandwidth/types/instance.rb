@@ -33,6 +33,10 @@ module Bandwidth
           value.to_i
         elsif coercion == Time
           Time.parse value
+        elsif coercion == :boolean
+          !!value
+        elsif coercion == :id
+          value.match(/[^\/]+$/)[0]
         end
       end
 
@@ -44,7 +48,7 @@ module Bandwidth
 
         def inherited base
           attributes = self.instance_variable_get :@attributes
-          base.instance_variable_set :@attributes, attributes
+          base.instance_variable_set :@attributes, attributes.clone
         end
       end
     end

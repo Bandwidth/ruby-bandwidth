@@ -13,11 +13,16 @@ module Bandwidth
       attribute :end_time, Time
 
       # @return [String] Media URL
-      attribute :media
+      attribute :media, :id
 
       # @return [String] Record state. One of:
       #   complete: Record complete
       attribute :state
+    end
+
+    class RecordWithCall < Record
+      # @return [String] Call id
+      attribute :call, :id
     end
   end
 end

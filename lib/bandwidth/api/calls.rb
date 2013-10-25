@@ -199,7 +199,7 @@ module Bandwidth
       # @return [Array<Types::Record>]
       #
       # @example
-      #   records = bandwidth.records call_id
+      #   records = bandwidth.call_records call_id
       #
       #   record = records.first
       #
@@ -209,7 +209,7 @@ module Bandwidth
       #   record.end_time # => 2013-02-08 13:15:55 UTC
       #   record.state # => "complete"
       #
-      def records call_id
+      def call_records call_id
         records, _headers = get "calls/#{call_id}/recordings"
 
         records.map do |record|

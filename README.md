@@ -396,11 +396,11 @@ Note a specical bargeable parameter to interrupt prompt (audio or sentence) at f
 
 ### Retrieve all recordings related to the call
 
-    records = bandwidth.records call_id
+    records = bandwidth.call_records call_id
     record = records.first
 
     record.id # => "rec-togfrwqp2bxxezstzbzadra"
-    record.media # => "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-1.wav"
+    record.media # => "c-j4gferrrn72ivf3ov56ccay-1.wav"
     record.start_time # => 2013-02-08 12:05:17 UTC
     record.end_time # => 2013-02-08 13:15:55 UTC
     record.state # => "complete"
@@ -422,13 +422,13 @@ See {Bandwidth::API::Media} and {Bandwidth::Types::Medium}
 
 ### Uploads a media file to the name you choose
 
-    bandwidth.upload "greeting.mp3", file.new("greeting.mp3")
+    bandwidth.upload "greeting.mp3", File.new("greeting.mp3")
 
-    bandwidth.upload "greeting.mp3", stringio.new(some_binary_data_here)
+    bandwidth.upload "greeting.mp3", StringIO.new(some_binary_data_here)
 
 ### Download media file
 
-    data = bandwidth.download "mysong.mp3"
+    data = bandwidth.download "c-bonay3r4mtwbplurq4nkt7q-1.wav"
 
 ### Permanently deletes a media file you uploaded
 
@@ -439,6 +439,171 @@ See {Bandwidth::API::Media} and {Bandwidth::Types::Medium}
 Retrieve call recordings, filtering by Id, user and/or calls.
 The recording information retrieved by GET method contains only textual data related to call recording as described on Properties section. To properly work with recorded media content such as download and removal of media file, please access Media documentation.
 
+See {Bandwidth::API::Records} and {Bandwidth::Types::RecordWithCall}
+
+### List records
+
+List a user's call records
+
+    records = bandwidth.records # => [#<Record:0xa798bf0>, ...]
+
+    record = records.first
+    record.end_time # => 2013-02-08 13:15:47 UTC
+    record.id # => "rec-togfrwqp2bxxezstzbzadra"
+    record.media # => "c-bonay3r4mtwbplurq4nkt7q-1.wav"
+    record.call # => "call": "c-bonay3r4mtwbplurq4nkt7q"
+    record.start_time # => 2013-02-08 13:16:35 UTC
+    record.state # => "complete"
+
+### Get recording information
+
+    bandwidth.record "rec-togfrwqp2bxxezstzbzadra" # => #<Record:0xa798bf0>
+
+## Bridges
+
+Bridge two calls allowing two way audio between them.
+
+See {Bandwidth::API::Bridges} and {Bandwidth::Types::Bridge}
+
+### Get a list of previous bridges
+
+    bridges = bandwidth.bridges # => [#<Bridge:0xa466c5c>, ...]
+
+    bridge = bridges.first
+    bridge.id # => "brg-7cp5tvhydw4a3esxwpww5qa"
+    bridge.state # => "completed"
+    bridge.bridge_audio # => true
+    bridge.created_time => 2013-04-22 13:55:30 UTC
+    bridge.activated_time => 2013-04-22 13:55:30 UTC
+    bridge.completed_time => 2013-04-22 13:56:30 UTC
+
+### Create a bridge
+
+    bandwidth.bridge "c-mxdxhidpjr6a2bp2lxq6vaa", "c-c2rui2kbrldsfgjhlvlnjaq"
+
+#### Disable two way audio path
+
+Audio is bridged by default, but it's possible to override that passing an option:
+
+    bandwidth.bridge "c-mxdxhidpjr6a2bp2lxq6vaa", "c-c2rui2kbrldsfgjhlvlnjaq", bridge_audio: false
+
+### Get information about a specific bridge
+
+    bandwidth.bridge_info "brg-7cp5tvhydw4a3esxwpww5qa" # => <Bridge:0xa466c5c>
+
+### Bridging audio
+
+    bandwidth.bridge_audio "brg-7cp5tvhydw4a3esxwpww5qa", true
+
+### Play a media file or speak a sentence in a bridge
+
+    sentence = Bandwidth::Audio::Sentence.new "Hello, thank you for calling."
+    audio_file = Bandwidth::Audio::File.new "http://example.com/audio.mp3"
+
+    bandwidth.bridge_play bridge_id, sentence
+    bandwidth.bridge_play bridge_id, audio_file
+
+### Destroy bridge
+
+Removes all calls from bridge. It will also change the bridge state to 'completed' and this bridge can not be updated anymore
+
+    bandwidth.unbridge bridge_id
+
+### Get the calls that are on the bridge
+
+    bandwidth.bridged_calls "brg-7cp5tvhydw4a3esxwpww5qa" # => [#<BridgedCall:0x9906e34>, #<BridgedCall:0xaf0f208>]
+
+## Conferences
+
+Allows you create conferences, add members to it, play audio, speak text, mute/unmute members, hold/unhold members and other things related to conferencing.
+
+See {Bandwidth::API::Conferences}, {Bandwidth::Types::Conference} and {Bandwidth::Types::ConferenceMember}
+
+### Create aa conference
+
+Creates a conference with no members.
+
+    conference_id = bandwidth.conference "+19195551212" # => "conf-7qrj2t3lfixl4cgjcdonkna"
+
+### Retrieve conference information
+
+    bandwidth.conference_info "conf-7qrj2t3lfixl4cgjcdonkna"
+
+### Terminate conference
+
+    bandwidth.conference_terminate "conf-7qrj2t3lfixl4cgjcdonkna"
+
+### Muting conference
+
+    bandwidth.conference_mute "conf-7qrj2t3lfixl4cgjcdonkna", true
+
+### Play an audio/speak a sentence in the conference
+
+    bandwidth.conference_play "conf-7qrj2t3lfixl4cgjcdonkna", audio
+
+### Add a member to a conference
+
+    call_id = bandwidth.dial "+19195551212", "+13125556666"
+    member_id = bandwidth.conference_add "conf-7qrj2t3lfixl4cgjcdonkna", call_id # => "member-ae4b8krsskpuvnw6nsitg78"
+
+### List all members from a conference
+
+    members = bandwidth.conference_members "conf-7qrj2t3lfixl4cgjcdonkna"
+
+    member = members.first
+    member.id # => "member-i3bgynrxllq3v3wiisiuz2q"
+    member.added_time # => 2013-07-12 17:54:47 UTC
+    member.hold # => false
+    member.mute # => false
+    member.state # => "active"
+    member.call # => "c-lem5j6326b2nyrej7ieheki"
+
+### Conference member operations
+
+#### Remove from conference
+
+    bandwidth.conference_member_remove conference_id, member_id
+
+#### Muting
+
+    bandwidth.conference_member_mute conference_id, member_id, true
+
+#### Putting on hold
+
+    bandwidth.conference_member_hold conference_id, member_id, true
+
+#### Play an audio/speak a sentence
+
+    sentence = Bandwidth::Audio::Sentence.new "Hello, thank you for calling."
+    audio_file = Bandwidth::Audio::File.new "http://example.com/audio.mp3"
+
+    bandwidth.conference_member_play conference_id, member_id, sentence
+    bandwidth.conference_member_play conference_id, member_id, audio_file
+
+#### Retrieve information about a particular conference member
+
+    member = bandwidth.conference_member_info conference_id, member_id
+    member.id # => "member-i3bgynrxllq3v3wiisiuz2q"
+    member.added_time # => 2013-07-12 17:54:47 UTC
+    member.hold # => false
+    member.mute # => false
+    member.state # => "active"
+    member.call # => "c-lem5j6326b2nyrej7ieheki"
+
 # Useful links
 
 Original api docs: https://catapult.inetwork.com/docs/
+
+# For contributors
+
+## Running tests
+
+    rake
+
+## Contribution guidelines
+
+Create a topic branch.
+Fix the issue.
+Cover with tests.
+Add documentation.
+Send pull request with commentary.
