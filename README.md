@@ -615,6 +615,11 @@ Original api docs: https://catapult.inetwork.com/docs/
 
     rake
 
+## Building and installing gem
+
+    gem build bandwidth.gemspec
+    gem install bandwidth<VERSION>.gem
+
 ## Contribution guidelines
 
 Create a topic branch.
