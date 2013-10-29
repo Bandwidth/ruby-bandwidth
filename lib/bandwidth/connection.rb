@@ -114,7 +114,7 @@ module Bandwidth
         return parsed_body, response.headers
       end
 
-      class Short
+      class Short < HTTP
         def url path
           [API_ENDPOINT, API_VERSION, path].join '/'
         end
