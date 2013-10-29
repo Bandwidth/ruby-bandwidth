@@ -29,6 +29,10 @@ Initialize API access object and connect to your account data:
     SECRET = "6db9531b2794663d75454fb42476ddcb0215f28c" # Your secret
     bandwidth = Bandwidth.new USERID, TOKEN, SECRET
 
+## Examples
+
+See examples folder for real world examples
+
 ## Account
 
 See {Bandwidth::API::Account} and {Bandwidth::Types::Account}
