@@ -256,16 +256,16 @@ Gets a list of active and historic calls you made or received
     call.state # => "completed"
 
     # Date when the call was created
-    call.startTime # => 2013-02-08 13:15:47 UTC
+    call.start_time # => 2013-02-08 13:15:47 UTC
 
     # Date when the call was answered
-    call.activeTime # => 2013-02-08 13:15:52 UTC
+    call.active_time # => 2013-02-08 13:15:52 UTC
 
     # Date when the call ended
-    call.endTime # => 2013-02-08 13:15:55 UTC
+    call.end_time # => 2013-02-08 13:15:55 UTC
 
-    # Chargable call duration (seconds between activeTime and endTime)
-    call.chargeableDuration # => 60
+    # Chargeable call duration (seconds between activeTime and endTime)
+    call.chargeable_duration # => 60
 
 #### Filtering calls
 
@@ -511,7 +511,18 @@ Removes all calls from bridge. It will also change the bridge state to 'complete
 
 ### Get the calls that are on the bridge
 
-    bandwidth.bridged_calls "brg-7cp5tvhydw4a3esxwpww5qa" # => [#<BridgedCall:0x9906e34>, #<BridgedCall:0xaf0f208>]
+    calls = bandwidth.bridged_calls "brg-7cp5tvhydw4a3esxwpww5qa" # => [#<BridgedCall:0x9906e34>, #<BridgedCall:0xaf0f208>]
+
+    call = calls.first
+    call.bridge_id # => "brg-7cp5tvhydw4a3esxwpww5qa"
+    call.id # => "c-clgsmnrn4ruwdx36rxf7zoi"
+    call.direction # => "out"
+    call.from # => "+19195551212"
+    call.to # => "+13125556666"
+    call.state # => "active"
+    call.startTime # => 2013-02-08 13:15:47 UTC
+    call.activeTime # => 2013-02-08 13:15:52 UTC
+    call.recording_enabled # => false
 
 ## Conferences
 
@@ -521,7 +532,7 @@ See {Bandwidth::API::Conferences}, {Bandwidth::Types::Conference} and {Bandwidth
 
 ### Create aa conference
 
-Creates a conference with no members.
+Creates a conference with no members
 
     conference_id = bandwidth.conference "+19195551212" # => "conf-7qrj2t3lfixl4cgjcdonkna"
 

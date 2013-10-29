@@ -22,10 +22,10 @@ module Bandwidth
       #   call.from # => "+19195551212"
       #   call.to # => "+13125556666"
       #   call.state # => "completed"
-      #   call.startTime # => 2013-02-08 13:15:47 UTC
-      #   call.activeTime # => 2013-02-08 13:15:52 UTC
-      #   call.endTime # => 2013-02-08 13:15:55 UTC
-      #   call.chargeableDuration # => 60
+      #   call.start_time # => 2013-02-08 13:15:47 UTC
+      #   call.active_time # => 2013-02-08 13:15:52 UTC
+      #   call.end_time # => 2013-02-08 13:15:55 UTC
+      #   call.chargeable_duration # => 60
       #
       def calls options={}
         # TODO: raise AE if wrong options passed (all the methods)
