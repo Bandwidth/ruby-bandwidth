@@ -113,10 +113,12 @@ module Bandwidth
       #   member.call # => "c-lem5j6326b2nyrej7ieheki"
       #
       def conference_members conference_id
-        members, _headers = get "conferences/#{conference_id}/members"
+        LazyArray.new do |page, size|
+          members, _headers = get "conferences/#{conference_id}/members", page: page, size: size
 
-        members.map do |member|
-          Types::ConferenceMember.new member
+          members.map do |member|
+            Types::ConferenceMember.new member
+          end
         end
       end
 

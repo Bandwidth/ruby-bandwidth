@@ -18,6 +18,8 @@ require "bandwidth/audio/sentence"
 require "bandwidth/errors/generic_error"
 require "bandwidth/errors/restricted_number"
 
+require "bandwidth/lazy_array"
+
 require "bandwidth/api/account"
 require "bandwidth/api/messages"
 require "bandwidth/api/available_numbers"

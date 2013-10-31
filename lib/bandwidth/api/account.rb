@@ -16,7 +16,6 @@ module Bandwidth
       # @option options [String] :type Filter by specific payment type (see {TransactionTypes} for allowed values)
       # @option options [Time] :from_date From a specific point of time
       # @option options [Time] :to_date Up to specific point of time
-      # @option options [Integer] :max_items Limit quantity of returned items
       #
       # @return [Array<Types::Transaction>]
       #
@@ -38,17 +37,17 @@ module Bandwidth
       # @example Filter by payment type
       #   transactions = bandwidth.transactions type: Bandwidth::API::Account::TransactionTypes::AUTO_RECHARGE
       #
-      # @example Limit quantity
-      #   transactions = bandwidth.transactions max_items: 5 # Will return maximum 5 transactions
-      #
       def transactions options = {}
         options[:from_date] = options[:from_date].iso8601 if options[:from_date]
         options[:to_date] = options[:to_date].iso8601 if options[:to_date]
+        # TODO: fail on incorrect options
 
-        transactions, _headers = get 'account/transactions', options
+        LazyArray.new do |page, size|
+          transactions, _headers = get 'account/transactions', options.merge(page: page, size: size)
 
-        transactions.map do |transaction|
-          Types::Transaction.new transaction
+          transactions.map do |transaction|
+            Types::Transaction.new transaction
+          end
         end
       end
 

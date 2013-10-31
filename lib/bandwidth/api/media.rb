@@ -16,10 +16,12 @@ module Bandwidth
       #   medium.media_name # => "mysong.mp3"
       #
       def media
-        media, _headers = get 'media'
+        LazyArray.new do |page, size|
+          media, _headers = get 'media', page: page, size: size
 
-        media.map do |medium|
-          Types::Medium.new medium
+          media.map do |medium|
+            Types::Medium.new medium
+          end
         end
       end
 

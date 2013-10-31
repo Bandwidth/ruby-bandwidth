@@ -81,34 +81,78 @@ describe Bandwidth::API::Messages do
   end
 
   it "gets a list of messages" do
-    @bandwidth.stub.get("/messages") {[200, {}, <<-JSON
-      [
-        {
-          "id": "m-6usiz7e7tsjjafn5htk5huy",
-          "messageId": "m-6usiz7e7tsjjafn5htk5huy",
-          "from": "+19195551212",
-          "to": "+13125556666",
-          "text": "Good morning, this is a test message",
-          "time": "2012-10-05T20:37:38.048Z",
-          "direction": "out",
-          "state": "sent"
-        },
-        {
-          "id": "m-ysgivd4qyxylwgs6mvyg6oy",
-          "messageId": "m-ysgivd4qyxylwgs6mvyg6oy",
-          "from": "+13125556666",
-          "to": "+19195551212",
-          "text": "I received your test message",
-          "time": "2012-10-05T20:38:11.023Z",
-          "direction": "in",
-          "state": "sent"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get("/messages") do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "id": "m-6usiz7e7tsjjafn5htk5huy",
+              "messageId": "m-6usiz7e7tsjjafn5htk5huy",
+              "from": "+19195551212",
+              "to": "+13125556666",
+              "text": "Good morning, this is a test message",
+              "time": "2012-10-05T20:37:38.048Z",
+              "direction": "out",
+              "state": "sent"
+            },
+            {
+              "id": "m-ysgivd4qyxylwgs6mvyg6oy",
+              "messageId": "m-ysgivd4qyxylwgs6mvyg6oy",
+              "from": "+13125556666",
+              "to": "+19195551212",
+              "text": "I received your test message",
+              "time": "2012-10-05T20:38:11.023Z",
+              "direction": "in",
+              "state": "sent"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     messages = @bandwidth.messages
     assert_equal 2, messages.size
+  end
+
+  it "paginates results" do
+    first_id = "m-6usiz7e7tsjjafn5htk5huy"
+    last_id = "m-ysgivd4qyxylwgs6mvyg6oy"
+
+    @bandwidth.stub.get("/messages") do |request|
+      assert_equal 25, request[:params]['size'].to_i
+
+      id = request[:params]['page'].to_i == 0 ? first_id : last_id
+
+      if request[:params]['page'].to_i > 1
+        [200, {}, "[]"]
+      else
+        [200, {}, (
+          "[" + (0..24).map {
+          <<-JSON
+            {
+              "id": "#{id}",
+              "messageId": "#{id}",
+              "from": "+13125556666",
+              "to": "+19195551212",
+              "text": "I received your test message",
+              "time": "2012-10-05T20:38:11.023Z",
+              "direction": "in",
+              "state": "sent"
+            }
+          JSON
+        }.join(',') + "]")
+        ]
+      end
+    end
+
+    messages = @bandwidth.messages
+    assert_equal "m-6usiz7e7tsjjafn5htk5huy", messages.first.id
+    assert_equal "m-ysgivd4qyxylwgs6mvyg6oy", messages[25].id
+    assert_equal nil, messages[50]
   end
 
   it "filters list of messages by sender" do

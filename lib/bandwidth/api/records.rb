@@ -20,10 +20,12 @@ module Bandwidth
       # @note See [API::Media] on how to download records
       #
       def records
-        records, _headers = get 'recordings'
+        LazyArray.new do |page, size|
+          records, _headers = get 'recordings', page: page, size: size
 
-        records.map do |record|
-          Types::RecordWithCall.new record
+          records.map do |record|
+            Types::RecordWithCall.new record
+          end
         end
       end
 

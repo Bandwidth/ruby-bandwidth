@@ -6,23 +6,30 @@ describe Bandwidth::API::Media do
   end
 
   it "lists media files" do
-    @bandwidth.stub.get("/media") {[200, {}, <<-JSON
-      [
-        {
-          "contentLength": 561276,
-          "mediaName": "house.jpg"
-        },
-        {
-          "contentLength": 2703360,
-          "mediaName": "mysong.mp3"
-        },
-        {
-          "contentLength": 588,
-          "mediaName": "test.txt"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get("/media") do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "contentLength": 561276,
+              "mediaName": "house.jpg"
+            },
+            {
+              "contentLength": 2703360,
+              "mediaName": "mysong.mp3"
+            },
+            {
+              "contentLength": 588,
+              "mediaName": "test.txt"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     media = @bandwidth.media
     assert_equal 3, media.size

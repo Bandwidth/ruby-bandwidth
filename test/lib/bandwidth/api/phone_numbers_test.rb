@@ -6,31 +6,38 @@ describe Bandwidth::API::PhoneNumbers do
   end
 
   it "returns a list of allocated phone numbers" do
-    @bandwidth.stub.get('/phoneNumbers') {[200, {}, <<-JSON
-      [
-        {
-          "id": "n-6nuymbplrb3zd5yazve2ley",
-          "number":"+19195551212",
-          "nationalNumber":"(919) 555-1212",
-          "name": "home phone",
-          "createdTime": "2013-02-13T17:46:08.374Z",
-          "state": "NC",
-          "price": "0.60",
-          "numberState": "enabled"
-        },
-        {
-          "id": "n-8adcv3pvrdfssdfvber6rsd",
-          "number":"+19195558888",
-          "nationalNumber":"(919) 555-8888",
-          "name": "work phone",
-          "createdTime": "2013-02-13T18:32:05.223Z",
-          "state": "NC",
-          "price": "0.60",
-          "numberState": "enabled"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get('/phoneNumbers') do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "id": "n-6nuymbplrb3zd5yazve2ley",
+              "number":"+19195551212",
+              "nationalNumber":"(919) 555-1212",
+              "name": "home phone",
+              "createdTime": "2013-02-13T17:46:08.374Z",
+              "state": "NC",
+              "price": "0.60",
+              "numberState": "enabled"
+            },
+            {
+              "id": "n-8adcv3pvrdfssdfvber6rsd",
+              "number":"+19195558888",
+              "nationalNumber":"(919) 555-8888",
+              "name": "work phone",
+              "createdTime": "2013-02-13T18:32:05.223Z",
+              "state": "NC",
+              "price": "0.60",
+              "numberState": "enabled"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     numbers = @bandwidth.phone_numbers
     assert_equal 2, numbers.size

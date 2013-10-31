@@ -30,10 +30,13 @@ module Bandwidth
       def calls options={}
         # TODO: raise AE if wrong options passed (all the methods)
         options.keep_if {|key, _v| [:to, :from, :bridge_id, :conference_id].include? key }
-        calls, _headers = get 'calls', options
 
-        calls.map do |call|
-          Types::Call.new call
+        LazyArray.new do |page, size|
+          calls, _headers = get 'calls', options.merge(page: page, size: size)
+
+          calls.map do |call|
+            Types::Call.new call
+          end
         end
       end
 
@@ -210,10 +213,12 @@ module Bandwidth
       #   record.state # => "complete"
       #
       def call_records call_id
-        records, _headers = get "calls/#{call_id}/recordings"
+        LazyArray.new do |page, size|
+          records, _headers = get "calls/#{call_id}/recordings", page: page, size: size
 
-        records.map do |record|
-          Types::Record.new record
+          records.map do |record|
+            Types::Record.new record
+          end
         end
       end
     end

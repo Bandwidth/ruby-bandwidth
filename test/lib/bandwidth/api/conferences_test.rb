@@ -121,31 +121,38 @@ describe Bandwidth::API::Conferences do
   it "lists members of conference" do
     conference_id = "conf-7qrj2t3lfixl4cgjcdonkna"
 
-    @bandwidth.stub.get("/conferences/#{conference_id}/members") {[200, {}, <<-JSON
-      [
-        {
-          "addedTime": "2013-07-12T15:54:47-02",
-          "removedTime": "2013-07-12T15:49:11-02",
-          "hold": false,
-          "id": "member-i3bgynrxllq3v3wiisiuz2q",
-          "mute": false,
-          "state": "active",
-          "call": "https://localhost:8444/v1/users/u-sg3wn3asvjzwbneengn3mma/calls/c-lem5j6326b2nyrej7ieheki"
-        },
-        {
-          "addedTime": "2013-07-12T15:55:12-02",
-          "removedTime": "2013-07-12T15:49:11-02",
-          "hold": false,
-          "id": "member-ae4b8krsskpuvnw6nsitg78",
-          "mute": false,
-          "state": "active",
-          "call": "https://localhost:8444/v1/users/u-sg3wn3asvjzwbneengn3mma/calls/c-pk45jbkdib8j3xaj7odmnj9"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get("/conferences/#{conference_id}/members") do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "addedTime": "2013-07-12T15:54:47-02",
+              "removedTime": "2013-07-12T15:49:11-02",
+              "hold": false,
+              "id": "member-i3bgynrxllq3v3wiisiuz2q",
+              "mute": false,
+              "state": "active",
+              "call": "https://localhost:8444/v1/users/u-sg3wn3asvjzwbneengn3mma/calls/c-lem5j6326b2nyrej7ieheki"
+            },
+            {
+              "addedTime": "2013-07-12T15:55:12-02",
+              "removedTime": "2013-07-12T15:49:11-02",
+              "hold": false,
+              "id": "member-ae4b8krsskpuvnw6nsitg78",
+              "mute": false,
+              "state": "active",
+              "call": "https://localhost:8444/v1/users/u-sg3wn3asvjzwbneengn3mma/calls/c-pk45jbkdib8j3xaj7odmnj9"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
-   members = @bandwidth.conference_members conference_id
+    members = @bandwidth.conference_members conference_id
     assert_equal 2, members.size
 
     member = members.first

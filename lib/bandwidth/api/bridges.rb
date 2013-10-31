@@ -21,10 +21,12 @@ module Bandwidth
       #   bandwidth.bridge_info "brg-7cp5tvhydw4a3esxwpww5qa", false
       #
       def bridges
-        bridges, _headers = get 'bridges'
+        LazyArray.new do |page, size|
+          bridges, _headers = get 'bridges', page: page, size: size
 
-        bridges.map do |bridge|
-          Types::Bridge.new bridge
+          bridges.map do |bridge|
+            Types::Bridge.new bridge
+          end
         end
       end
 
@@ -112,10 +114,12 @@ module Bandwidth
       #   call.recording_enabled # => false
       #
       def bridged_calls bridge_id
-        calls, _headers = get "bridges/#{bridge_id}/calls"
+        LazyArray.new do |page, size|
+          calls, _headers = get "bridges/#{bridge_id}/calls", page: page, size: size
 
-        calls.map do |call|
-          Types::BridgedCall.new call
+          calls.map do |call|
+            Types::BridgedCall.new call
+          end
         end
       end
 

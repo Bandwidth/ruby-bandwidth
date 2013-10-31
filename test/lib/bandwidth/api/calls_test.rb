@@ -6,33 +6,40 @@ describe Bandwidth::API::Calls do
   end
 
   it "lists calls" do
-    @bandwidth.stub.get('/calls') {[200, {}, <<-JSON
-      [
-        {
-          "id": "c-clgsmnrn4ruwdx36rxf7zoi",
-          "direction": "out",
-          "from": "+19195551212",
-          "to": "+13125556666",
-          "state": "completed",
-          "startTime": "2013-02-08T13:15:47.587Z",
-          "activeTime": "2013-02-08T13:15:52.347Z",
-          "endTime": "2013-02-08T13:15:55.887Z",
-          "chargeableDuration": 60
-        },
-        {
-          "id": "c-xytsl6nfcayzsxdbqq7q36i",
-          "direction": "out",
-          "from": "+13125556666",
-          "to": "+13125557777",
-          "state": "active",
-          "startTime": "2013-02-08T13:15:47.587Z",
-          "activeTime": "2013-02-08T13:15:52.347Z",
-          "endTime": "2013-02-08T13:15:55.887Z",
-          "chargeableDuration": 30
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get('/calls') do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "id": "c-clgsmnrn4ruwdx36rxf7zoi",
+              "direction": "out",
+              "from": "+19195551212",
+              "to": "+13125556666",
+              "state": "completed",
+              "startTime": "2013-02-08T13:15:47.587Z",
+              "activeTime": "2013-02-08T13:15:52.347Z",
+              "endTime": "2013-02-08T13:15:55.887Z",
+              "chargeableDuration": 60
+            },
+            {
+              "id": "c-xytsl6nfcayzsxdbqq7q36i",
+              "direction": "out",
+              "from": "+13125556666",
+              "to": "+13125557777",
+              "state": "active",
+              "startTime": "2013-02-08T13:15:47.587Z",
+              "activeTime": "2013-02-08T13:15:52.347Z",
+              "endTime": "2013-02-08T13:15:55.887Z",
+              "chargeableDuration": 30
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     calls = @bandwidth.calls
 
@@ -453,25 +460,32 @@ describe Bandwidth::API::Calls do
     end_time = "2013-02-08T12:06:55.007Z"
     start_time = "2013-02-08T12:05:17.807Z"
 
-    @bandwidth.stub.get("/calls/#{call_id}/recordings") {[200, {}, <<-JSON
-      [
-        {
-          "endTime": "#{end_time}",
-          "id": "#{record_id}",
-          "media": "https://.../v1/users/.../media/#{media_id}",
-          "startTime": "#{start_time}",
-          "state": "complete"
-        },
-        {
-          "endTime": "2013-02-08T13:15:55.887Z",
-          "id": "rec-2nsxh4izqj6effol6byo5aq",
-          "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-2.wav",
-          "startTime": "2013-02-08T13:15:55.887Z",
-          "state": "complete"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get("/calls/#{call_id}/recordings") do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "endTime": "#{end_time}",
+              "id": "#{record_id}",
+              "media": "https://.../v1/users/.../media/#{media_id}",
+              "startTime": "#{start_time}",
+              "state": "complete"
+            },
+            {
+              "endTime": "2013-02-08T13:15:55.887Z",
+              "id": "rec-2nsxh4izqj6effol6byo5aq",
+              "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-2.wav",
+              "startTime": "2013-02-08T13:15:55.887Z",
+              "state": "complete"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     records = @bandwidth.call_records call_id
     assert_equal 2, records.size

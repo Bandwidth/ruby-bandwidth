@@ -70,12 +70,6 @@ See {Bandwidth::API::Account} and {Bandwidth::Types::Transaction}
     # The phone number the transaction was related to (not all transactions are related to a phone number)
     example_transaction.number # => "+12345678910"
 
-    # Used for pagination to indicate the page requested for querying a list of transactions. If no value is specified the default is 0.
-    example_transaction.page
-
-    # Used for pagination to indicate the size of each page requested for querying a list of transactions. If no value is specified the default value is 25. (Maximum value 1000)
-    example_transaction.size
-
 ### Filter by time period
 
     from = "2013-02-21T13:38:00Z"
@@ -90,10 +84,6 @@ See {Bandwidth::API::Account} and {Bandwidth::Types::Transaction}
 Available payment types:
 
     CHARGE, PAYMENT, CREDIT, AUTO_RECHARGE
-
-### Limit quantity
-
-    transactions = bandwidth.transactions max_items: 5 # Will return maximum 5 transactions
 
 ## Messages
 
@@ -133,12 +123,6 @@ See {Bandwidth::API::Messages} and {Bandwidth::Types::Message}
 
     # The message contents
     message.text # => "Good morning, this is a test message"
-
-    # Used for pagination to indicate the page requested for querying a list of messages. If no value is specified the default is 0.
-    message.page
-
-    # Used for pagination to indicate the size of each page requested for querying a list of messages. If no value is specified the default value is 25. (Maximum value 1000)   messa
-    message.size
 
 ### Get a list of messages
 
@@ -383,7 +367,7 @@ Stop gathering if a DTMF digit is not detected in this many seconds (default 5.0
 
     dtmf = bandwidth.gather call_id, inter_digit_timeout: 10
 
-A string of DTMF digits that end the gather operation immediately if any one of them is detected (default "#"; an empty string means collect all DTMF until maxDigits or the timeout).
+A string of DTMF digits that end the gather operation immediately if any one of them is detected (default "#"; an empty string means collect all DTMF until max\_digits or the timeout).
 The gather ends if either 0, #, or * is detected:
 
     dtmf = bandwidth.gather call_id, terminating_digits: "0#*"

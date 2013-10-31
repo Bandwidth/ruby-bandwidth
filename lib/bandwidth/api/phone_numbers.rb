@@ -18,10 +18,12 @@ module Bandwidth
       #   number.state # => "NC"
       #
       def phone_numbers
-        phone_numbers, _headers = get 'phoneNumbers'
+        LazyArray.new do |page, size|
+          phone_numbers, _headers = get 'phoneNumbers', page: page, size: size
 
-        phone_numbers.map do |phone_number|
-          Types::AllocatedPhoneNumber.new phone_number
+          phone_numbers.map do |phone_number|
+            Types::AllocatedPhoneNumber.new phone_number
+          end
         end
       end
 

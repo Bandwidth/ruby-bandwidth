@@ -6,35 +6,42 @@ describe Bandwidth::API::Records do
   end
 
   it "returns a list of records" do
-    @bandwidth.stub.get('/recordings') {[200, {}, <<-JSON
-      [
-        {
-          "endTime": "2013-02-08T13:17:12.181Z",
-          "id": "rec-togfrwqp2bxxezstzbzadra",
-          "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-1.wav",
-          "call": "https://.../v1/users/.../calls/c-j4gferrrn72ivf3ov56ccay",
-          "startTime": "2013-02-08T13:15:47.587Z",
-          "state": "complete"
-        },
-        {
-          "endTime": "2013-02-08T14:05:15.587Z",
-          "id": "rec-2nsxh4izqj6effol6byo5aq",
-          "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-2.wav",
-          "call": "https://.../v1/users/.../calls/c-j4gferrrn72ivf3ov56ccay",
-          "startTime": "2013-02-08T14:03:47.587Z",
-          "state": "complete"
-        },
-        {
-          "endTime": "2013-02-08T13:34:07.507Z",
-          "id": "rec-iyrrghf45ge2w267dllmhyq",
-          "media": "https://.../v1/users/.../media/c-cyalm3upp7yp6ih4mkx7lci-1.wav",
-          "call": "https://.../v1/users/.../calls/c-cyalm3upp7yp6ih4mkx7lci",
-          "startTime": "2013-02-08T13:28:47.587Z",
-          "state": "complete"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get('/recordings') do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "endTime": "2013-02-08T13:17:12.181Z",
+              "id": "rec-togfrwqp2bxxezstzbzadra",
+              "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-1.wav",
+              "call": "https://.../v1/users/.../calls/c-j4gferrrn72ivf3ov56ccay",
+              "startTime": "2013-02-08T13:15:47.587Z",
+              "state": "complete"
+            },
+            {
+              "endTime": "2013-02-08T14:05:15.587Z",
+              "id": "rec-2nsxh4izqj6effol6byo5aq",
+              "media": "https://.../v1/users/.../media/c-j4gferrrn72ivf3ov56ccay-2.wav",
+              "call": "https://.../v1/users/.../calls/c-j4gferrrn72ivf3ov56ccay",
+              "startTime": "2013-02-08T14:03:47.587Z",
+              "state": "complete"
+            },
+            {
+              "endTime": "2013-02-08T13:34:07.507Z",
+              "id": "rec-iyrrghf45ge2w267dllmhyq",
+              "media": "https://.../v1/users/.../media/c-cyalm3upp7yp6ih4mkx7lci-1.wav",
+              "call": "https://.../v1/users/.../calls/c-cyalm3upp7yp6ih4mkx7lci",
+              "startTime": "2013-02-08T13:28:47.587Z",
+              "state": "complete"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     records = @bandwidth.records
     assert_equal 3, records.size
