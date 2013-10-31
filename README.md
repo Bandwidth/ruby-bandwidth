@@ -604,6 +604,20 @@ Original api docs: https://catapult.inetwork.com/docs/
     gem build bandwidth.gemspec
     gem install bandwidth<VERSION>.gem
 
+## Documentation generation
+
+Generates documentation:
+
+    yard doc
+
+Check what's not covered by documentation:
+
+    yard stats --list-undoc
+
+Start local documentation server at http://localhost:8808/docs
+
+    yard server
+
 ## Contribution guidelines
 
 Create a topic branch.
