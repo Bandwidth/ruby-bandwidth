@@ -27,7 +27,7 @@ Initialize API access object and connect to your account data:
     USER_ID = "u-ku5k3kzhbf4nligdgweuqie" # Your user id
     TOKEN  = "t-apseoipfjscawnjpraalksd" # Your account token
     SECRET = "6db9531b2794663d75454fb42476ddcb0215f28c" # Your secret
-    bandwidth = Bandwidth.new USERID, TOKEN, SECRET
+    bandwidth = Bandwidth.new USER_ID, TOKEN, SECRET
 
 ## Examples
 
