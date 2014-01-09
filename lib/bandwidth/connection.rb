@@ -25,7 +25,7 @@ module Bandwidth
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent
     def short_http
-      @short_http ||= HTTP::Short.new
+      @short_http ||= HTTP::Short.new @user_id, @token, @secret
     end
 
     delegate :get, :get_raw, :post, :put, :put_with_body, :delete, to: :http
@@ -33,10 +33,14 @@ module Bandwidth
   protected
 
     def http
-      @http ||= HTTP.new
+      @http ||= HTTP.new @user_id, @token, @secret
     end
 
     class HTTP
+      def initialize user_id, token, secret
+        @user_id, @token, @secret = user_id, token, secret
+      end
+
       def get path, parameters={}
         normalize_response connection.get url(path), camelcase(parameters)
       end
