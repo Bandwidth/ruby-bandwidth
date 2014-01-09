@@ -595,6 +595,13 @@ Original api docs: https://catapult.inetwork.com/docs/
 
 # For contributors
 
+## Prerequisites
+
+You will need some gems to test and develop bandwidth gem. Install them:
+
+    gem install bundler
+    bundle install
+
 ## Running tests
 
     rake
