@@ -41,7 +41,9 @@ module Bandwidth
       # @return [Array<Types::Message>]
       #
       # @example Getting a list of messages
-      #   bandwidth.messages # => [#<Message:0xb642ffc>, #<Message:0xb642fe8>]
+      #   messages = bandwidth.messages # => [#<Message:0xb642ffc>, #<Message:0xb642fe8>]
+      #
+      #   message = messages.first
       #
       #   message.direction # => "out"
       #   message.from # => "+19195551212"
@@ -54,10 +56,12 @@ module Bandwidth
       #   messages = bandwidth.messages from: "+19195551212", to:"+13125556666" # => [#<Message:0xa8526e0>, #<Message:0xa85ee7c>]
       #
       def messages options = {}
-        messages, _headers = get 'messages', options
+        LazyArray.new do |page, size|
+          messages, _headers = get 'messages', options.merge(page: page, size: size)
 
-        messages.map do |message|
-          Types::Message.new message
+          messages.map do |message|
+            Types::Message.new message
+          end
         end
       end
 

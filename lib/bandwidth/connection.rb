@@ -1,7 +1,8 @@
 require 'faraday'
 require 'json'
 
-require 'active_support//core_ext/module/delegation'
+require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/string/inflections'
 
 module Bandwidth
   class Connection
@@ -14,24 +15,39 @@ module Bandwidth
     include API::Account
     include API::Messages
     include API::AvailableNumbers
+    include API::PhoneNumbers
+    include API::Calls
+    include API::Media
+    include API::Records
+    include API::Bridges
+    include API::Conferences
 
     # @api private
     # FIXME: ugly. should be fixed in REST API to keep URLs consistent
     def short_http
-      @short_http ||= HTTP::Short.new
+      @short_http ||= HTTP::Short.new @user_id, @token, @secret
     end
 
-    delegate :get, :post, :put, :delete, to: :http
+    delegate :get, :get_raw, :post, :put, :put_with_body, :delete, to: :http
 
   protected
 
     def http
-      @http ||= HTTP.new
+      @http ||= HTTP.new @user_id, @token, @secret
     end
 
     class HTTP
+      def initialize user_id, token, secret
+        @user_id, @token, @secret = user_id, token, secret
+      end
+
       def get path, parameters={}
         normalize_response connection.get url(path), camelcase(parameters)
+      end
+
+      def get_raw path, parameters={}
+        response = connection.get url(path), camelcase(parameters)
+        return response.body, response.headers
       end
 
       def post path, parameters={}
@@ -46,6 +62,16 @@ module Bandwidth
 
       def put path, parameters={}
         normalize_response connection.put url(path), camelcase(parameters)
+      end
+
+      def put_with_body path, body
+        response = connection.put do |req|
+          req.url url path
+          req.headers['Content-Length'] = body.size
+          req.body = body
+        end
+
+        normalize_response response
       end
 
       def delete path, parameters={}
@@ -92,7 +118,7 @@ module Bandwidth
         return parsed_body, response.headers
       end
 
-      class Short
+      class Short < HTTP
         def url path
           [API_ENDPOINT, API_VERSION, path].join '/'
         end
@@ -109,6 +135,12 @@ module Bandwidth
         @hash.each do |k, v|
           yield k.to_s.camelcase(:lower), v
         end
+      end
+
+      def to_json *a
+        hash = {}
+        self.each {|k, v| hash[k] = v}
+        hash.to_json *a
       end
     end
   end

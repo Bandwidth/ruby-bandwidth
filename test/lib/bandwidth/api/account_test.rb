@@ -19,29 +19,36 @@ describe Bandwidth::API::Account do
   end
 
   it "returns a list of transactions" do
-    @bandwidth.stub.get('/account/transactions') {[200, {}, <<-JSON
-      [
-        {
-          "id": "pptx-wqfnffduxiki4fd5ubhv77a",
-          "time": "2013-02-21T13:39:09.122Z",
-          "amount": "0.00750",
-          "type": "charge",
-          "units": "1",
-          "productType": "sms-out",
-          "number": "+12345678910"
-        },
-        {
-          "id": "pptx-mvhqse4weiuzplt6bvqjuyi",
-          "time": "2013-02-21T13:37:42.079Z",
-          "amount": "0.00750",
-          "type": "charge",
-          "units": "1",
-          "productType": "sms-out",
-          "number": "+12345678910"
-        }
-      ]
-      JSON
-    ]}
+    @bandwidth.stub.get('/account/transactions') do |request|
+      page = request[:params]['page'].to_i
+      if page > 0
+        [200, {}, "[]"]
+      else
+        [200, {}, <<-JSON
+          [
+            {
+              "id": "pptx-wqfnffduxiki4fd5ubhv77a",
+              "time": "2013-02-21T13:39:09.122Z",
+              "amount": "0.00750",
+              "type": "charge",
+              "units": "1",
+              "productType": "sms-out",
+              "number": "+12345678910"
+            },
+            {
+              "id": "pptx-mvhqse4weiuzplt6bvqjuyi",
+              "time": "2013-02-21T13:37:42.079Z",
+              "amount": "0.00750",
+              "type": "charge",
+              "units": "1",
+              "productType": "sms-out",
+              "number": "+12345678910"
+            }
+          ]
+          JSON
+        ]
+      end
+    end
 
     transactions = @bandwidth.transactions
     assert_equal 2, transactions.size
