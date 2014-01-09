@@ -1,4 +1,5 @@
 require_relative '../../../test_helper'
+require 'stringio'
 
 describe Bandwidth::API::Media do
   before do
