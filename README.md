@@ -6,11 +6,11 @@ Gem for integrating to Bandwidth's Telephony API
 
 Via rubygems:
 
-    gem install bandwidth
+    gem install ruby-bandwidth
 
 or add to your Gemfile:
 
-    gem 'bandwidth'
+    gem 'ruby-bandwidth'
 
 # Usage
 
@@ -20,7 +20,7 @@ See {Bandwidth}
 
 Optional, only unless you use Bundler to manage dependencies:
 
-    require "bandwidth"
+    require "ruby-bandwidth"
 
 Initialize API access object and connect to your account data:
 
