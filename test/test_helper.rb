@@ -14,6 +14,10 @@ module Bandwidth
     delegate :stub, to: :http
 
     class StubbedHttp < HTTP
+      def initialize
+        super "user_id", "token", "secret"
+      end
+
       def connection
         @connection ||= Faraday.new do |faraday|
           faraday.adapter :test, @stubs
