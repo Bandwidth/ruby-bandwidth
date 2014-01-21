@@ -95,12 +95,16 @@ module Bandwidth
       end
 
       def connect
-        Faraday.new do |faraday|
+        connection = Faraday.new do |faraday|
           faraday.request  :url_encoded             # form-encode POST params
           # TODO: use more advanced adapter when possible
           faraday.adapter  Faraday.default_adapter  # make requests with Net::HTTP
           faraday.basic_auth @token, @secret
         end
+        # FIXME This is a hack. Once server certificate changes, the gem will break
+        #   need to use 'certified' gem
+        connection.ssl[:ca_file] = "#{File.dirname(__FILE__)}/../../catapult.crt"
+        connection
       end
 
       def normalize_response response
