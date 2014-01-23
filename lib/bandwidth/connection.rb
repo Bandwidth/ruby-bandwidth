@@ -1,4 +1,5 @@
 require 'faraday'
+require 'certified'
 require 'json'
 
 require 'active_support/core_ext/module/delegation'
