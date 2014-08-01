@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Scott Barstow", "Phil Pirozhkov"]
   spec.description   = "Gem for integrating to Bandwidth's Telephony API"
   spec.summary       = spec.description
-  spec.homepage      = "https://github.com/scottbarstow/ruby-bandwidth"
+  spec.homepage      = "https://github.com/bandwidthcom/ruby-bandwidth"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
