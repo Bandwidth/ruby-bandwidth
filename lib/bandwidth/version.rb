@@ -1,3 +1,5 @@
 module Bandwidth
-  VERSION = "0.2.0"
+  attr_reader :VERSION 
+
+  VERSION = "0.2.01"
 end
