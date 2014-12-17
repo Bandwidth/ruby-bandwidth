@@ -56,7 +56,7 @@ module Bandwidth
       #
       def dial from, to, options={}
         parameters = { from: from, to: to }
-        options.keep_if {|key, _v| [:recording_enabled, :bridge_id].include? key }
+        options.keep_if {|key, _v| [:recording_enabled, :bridge_id, :callback_url].include? key }
 
         _body, headers = post 'calls', parameters.merge(options)
         headers['location'].match(/[^\/]+$/)[0]
@@ -189,10 +189,8 @@ module Bandwidth
       #
       def gather call_id, options={}
         # TODO: fail on wrong options
-        options[:prompt] = options[:audio].to_hash if options[:audio]
-        dtmf, _headers = get "calls/#{call_id}/gather", options
-
-        Types::DTMF.new dtmf
+        options[:prompt] = options[:prompt].to_hash if options[:prompt]
+        body, _headers = post "calls/#{call_id}/gather", options
       end
 
       # Retrieve all recordings related to the call
