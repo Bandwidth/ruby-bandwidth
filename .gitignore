@@ -6,4 +6,6 @@ doc
 *.gem
 .bundle
 *~
+*.iml 
+.idea 
 
