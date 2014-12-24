@@ -1,1 +1,1 @@
-require 'bandwidth'
+require_relative 'bandwidth'
