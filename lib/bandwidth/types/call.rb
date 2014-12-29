@@ -1,6 +1,6 @@
 module Bandwidth
   module Types
-    class BaseCall
+    class Call
       include Instance
 
       # @return [String] Call id
@@ -29,17 +29,13 @@ module Bandwidth
 
       # @return [Time] Time when the call was answered
       attribute :active_time, Time
-    end
 
-    class Call < BaseCall
       # @return [Time] Time when the call ended
       attribute :end_time, Time
 
       # @return [Integer] Seconds between call answer and call end
       attribute :chargeable_duration, Integer
-    end
 
-    class BridgedCall < BaseCall
       # @return [String] Unique bridge id
       attribute :bridge_id
 

@@ -100,7 +100,7 @@ module Bandwidth
       # @return [Array<Types::Bridge>]
       #
       # @example
-      #   calls = bandwidth.bridged_calls "brg-7cp5tvhydw4a3esxwpww5qa" # => [#<BridgedCall:0x9906e34>, #<BridgedCall:0xaf0f208>]
+      #   calls = bandwidth.bridged_calls "brg-7cp5tvhydw4a3esxwpww5qa" # => [#<Call:0x9906e34>, #<Call:0xaf0f208>]
       #
       #   call = calls.first
       #   call.bridge_id # => "brg-7cp5tvhydw4a3esxwpww5qa"
@@ -118,7 +118,7 @@ module Bandwidth
           calls, _headers = get "bridges/#{bridge_id}/calls", page: page, size: size
 
           calls.map do |call|
-            Types::BridgedCall.new call
+            Types::Call.new call
           end
         end
       end
