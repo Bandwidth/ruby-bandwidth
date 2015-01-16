@@ -10,7 +10,6 @@
 
 require 'bandwidth'
 require 'rspec'
-require 'rspec/autorun'
 
 RSpec.configure do |config|
   config.expect_with :rspec do |c|
