@@ -1,6 +1,6 @@
 require 'faraday'
 require 'certified'
-require 'json'
+require 'json/pure'
 require 'active_support/core_ext/string/inflections'
 
 module Bandwidth

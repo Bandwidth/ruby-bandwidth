@@ -2,6 +2,8 @@
 pkg/*
 Gemfile.lock
 doc
-.yardoc
+coverage
 *.gem
 .bundle
+*.log
+*.swp
