@@ -1,6 +1,6 @@
 require 'faraday'
 require 'certified'
-require 'json/pure'
+require 'json'
 require 'active_support/core_ext/string/inflections'
 
 module Bandwidth
@@ -23,7 +23,7 @@ module Bandwidth
       @prepare_url = lambda{ |path| "#{api_endpoint}/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end)}
       @create_connection = lambda{|path|
         Faraday.new(@prepare_url.call(path)) { |faraday|
-          faraday.basic_auth(api_token, api_secret)
+          faraday.basic_auth(api_token, secret)
           faraday.headers['Accept'] = 'application/json'
         }
       }
@@ -40,17 +40,16 @@ module Bandwidth
     end
 
     def Client.get_id_from_location_header(location)
-      items = location.split('/')
-      raise StandardError.new('Missing id in the location header') if items.length == 1
+      items = (location || '').split('/')
+      raise StandardError.new('Missing id in the location header') if items.size < 2
       items.last
     end
 
     def make_request(method, path, data = {})
       d  = camelcase(data)
-
       connection = @create_connection.call(path)
       response =  if method == :get || method == :delete
-                    connection.params(d)
+                    connection.params(d) unless d.empty?
                     connection.run_request(method, nil, nil, nil)
                   else
                     connection.run_request(method, nil, d.to_json(), {'Content-Type' => 'application/json'})

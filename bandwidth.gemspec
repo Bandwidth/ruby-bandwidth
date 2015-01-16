@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "faraday"
-  spec.add_dependency "json_pure"
+  spec.add_dependency "json"
   spec.add_dependency "activesupport"
   spec.add_dependency "certified"
 
