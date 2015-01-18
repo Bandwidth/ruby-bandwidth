@@ -4,16 +4,16 @@ describe Bandwidth::Client do
   describe '#initialize' do
     it 'should create instance of Client' do
       expect(Client.new()).to be_a(Client)
-      expect(Client.new('userId', 'token', 'secret')).to be_a(Client)
-      expect(Client.new('userId', 'token', 'secret', 'endpoint', 'version')).to be_a(Client)
-      expect(Client.new({:user_id => 'userId', :api_token => 'token', :secret => 'secret'})).to be_a(Client)
+      expect(Client.new('userId', 'token', 'api_secret')).to be_a(Client)
+      expect(Client.new('userId', 'token', 'api_secret', 'endpoint', 'version')).to be_a(Client)
+      expect(Client.new({:user_id => 'userId', :api_token => 'token', :api_secret => 'api_secret'})).to be_a(Client)
     end
   end
 
   describe '#global_options' do
     it 'should return and change @@global_options of Client' do
-      Client.global_options = {:user_id => 'User', :api_token => 'token', :secret => 'secret'}
-      expect(Client.global_options).to eql({:user_id => 'User', :api_token => 'token', :secret => 'secret'})
+      Client.global_options = {:user_id => 'User', :api_token => 'token', :api_secret => 'api_secret'}
+      expect(Client.global_options).to eql({:user_id => 'User', :api_token => 'token', :api_secret => 'api_secret'})
     end
   end
 
@@ -29,16 +29,17 @@ describe Bandwidth::Client do
 
   describe '#make_request' do
     client = nil
-    before do
+    before :each do
       client = Helper.get_client()
     end
 
-#    it 'should make GET request and return json data' do
-#      stubs = Faraday::Adapter::Test::Stubs.new do |stub|
-#        stub.get('/v1/path1') { |env| [200, {}, '{"test": "data"}'] }
-#      end
-#      expect(client.make_request(:get, 'path1')).to eql(:test => 'data')
-#      stubs.verify_stubbed_calls()
-#    end
+    after :each do
+      client.stubs.verify_stubbed_calls()
+    end
+
+    it 'should make GET request and return json data' do
+      client.stubs.get('/v1/path1') { |env| [200, {}, '{"test": "data"}'] }
+      expect(client.make_request(:get, '/path1')).to eql(:test => 'data')
+    end
   end
 end
