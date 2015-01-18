@@ -39,7 +39,30 @@ describe Bandwidth::Client do
 
     it 'should make GET request and return json data' do
       client.stubs.get('/v1/path1') { |env| [200, {}, '{"test": "data"}'] }
+      client.stubs.get('/v1/path2?testField=10') { |env| [200, {}, '{"testValue": 10, "dataArray": [1,2,3]}'] }
       expect(client.make_request(:get, '/path1')).to eql(:test => 'data')
+      expect(client.make_request(:get, '/path2', {:test_field => 10})).to eql(:test_value => 10, :data_array => [1, 2, 3])
+    end
+
+    it 'should make POST request and return json data' do
+      client.stubs.post('/v1/path1', '{"testField":true}') { |env|  [200, {}, '{"success": true}'] }
+      expect(client.make_request(:post, '/path1', {:test_field => true})).to eql(:success => true)
+    end
+
+    it 'should make PUT request and return json data' do
+      client.stubs.put('/v1/path1', '{"testField":[{"item":1},{"item":2}]}') { |env|  [200, {}, '{"resultItems": [{"r": 10}, {"r": 20}]}'] }
+      expect(client.make_request(:put, '/path1', {:test_field => [{:item => 1}, {:item => 2}]})).to eql(:result_items => [{:r=>10}, {:r=>20}])
+    end
+
+    it 'should make DELETE request and return json data' do
+      client.stubs.delete('/v1/path1') { |env| [200, {}, '{"test": "data"}'] }
+      expect(client.make_request(:delete, '/path1')).to eql(:test => 'data')
+    end
+
+    it 'should raise error if http status >= 400' do
+      client.stubs.get('/v1/path1') { |env| [400, {}, '{"code": "code", "message": "error"}'] }
+      expect{client.make_request(:get, '/path1')}.to raise_error(Errors::GenericError, "error")
     end
   end
+
 end

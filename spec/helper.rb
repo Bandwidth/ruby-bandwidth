@@ -32,12 +32,7 @@ class StubbedClient < Bandwidth::Client
   def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1')
     super(user_id, api_token, api_secret, api_endpoint, api_version)
     @stubs = Faraday::Adapter::Test::Stubs.new()
-    create_connection = @create_connection
-    @create_connection = lambda{||
-      connection = create_connection.call()
-      connection.adapter(:test, @stubs)
-      connection
-    }
+    @set_adapter = lambda{|faraday| faraday.adapter(:test, @stubs)}
   end
  def stubs()
   @stubs

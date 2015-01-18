@@ -21,11 +21,12 @@ module Bandwidth
       end
       @concat_user_path = lambda {|path| "/users/#{userId}" + (if path[0] == "/" then path else "/#{path}" end) }
       @build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
+      @set_adapter = lambda {|faraday| faraday.adapter(Faraday.default_adapter)}
       @create_connection = lambda{||
         Faraday.new(api_endpoint) { |faraday|
           faraday.basic_auth(api_token, api_secret)
           faraday.headers['Accept'] = 'application/json'
-          faraday.adapter(Faraday.default_adapter)
+          @set_adapter.call(faraday)
         }
       }
     end
@@ -50,8 +51,9 @@ module Bandwidth
       d  = camelcase(data)
       connection = @create_connection.call()
       response =  if method == :get || method == :delete
-                    connection.params(d) unless d.empty?
-                    connection.run_request(method, @build_path.call(path), nil, nil)
+                    connection.run_request(method, @build_path.call(path), nil, nil) do |req|
+                      req.params = d unless d.empty?
+                    end
                   else
                     connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
                   end
@@ -68,34 +70,34 @@ module Bandwidth
 
     protected
 
-    def camelcase hash
-      result = {}
-      hash.each do |k, v|
-        result[k.to_s().camelcase(:lower)] = case
-          when v.is_a?(Hash)
-            camelcase(v)
-          when v.is_a?(Array)
-            v.map {|i| camelcase(i)}
-          else
-            v
+    def camelcase v
+      case
+        when v.is_a?(Array)
+          v.map {|i| camelcase(i)}
+        when v.is_a?(Hash)
+          result = {}
+          v.each do |k, val|
+            result[k.to_s().camelcase(:lower)] = camelcase(val)
           end
+          result
+        else
+          v
       end
-      result
     end
 
-    def symbolize hash
-      result = {}
-      hash.each do |k, v|
-        result[k.underscore().to_sym()] = case
-          when v.is_a?(Hash)
-            symbolize(v)
-          when v.is_a?(Array)
-            v.map {|i| symbolize(i)}
-          else
-            v
+    def symbolize v
+      case
+        when v.is_a?(Array)
+          v.map {|i| symbolize(i)}
+        when v.is_a?(Hash)
+          result = {}
+          v.each do |k, val|
+            result[k.underscore().to_sym()] = symbolize(val)
           end
+          result
+        else
+          v
       end
-      result
     end
   end
 end
