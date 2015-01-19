@@ -1,18 +1,16 @@
 module Bandwidth
   ACCOUNT_PATH = 'account'
   class Account
-    def Account.get(client = nil)
-      client = Client.new() unless client
+    extend ClientWrapper
+
+    def self.get(client)
       client.make_request(:get, client.concat_user_path(ACCOUNT_PATH))
     end
+    wrap_client_arg :get
 
-    def Account.get_transactions(client=nil, query={})
-      if client && !client.is_a?(Client)
-        query = client
-        client = nil
-      end
-      client = Client.new() unless client
+    def self.get_transactions(client, query={})
       client.make_request(:get, client.concat_user_path(ACCOUNT_PATH + "/transactions"), query)
     end
+    wrap_client_arg :get_transactions
   end
 end
