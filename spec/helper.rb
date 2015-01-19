@@ -37,6 +37,21 @@ module Helper
   def self.stubs()
     @stubs
   end
+
+  def self.camelcase v
+    case
+      when v.is_a?(Array)
+        v.map {|i| camelcase(i)}
+      when v.is_a?(Hash)
+        result = {}
+        v.each do |k, val|
+          result[k.to_s().camelcase(:lower)] = camelcase(val)
+        end
+        result
+      else
+        v
+    end
+  end
 end
 
 class  Bandwidth::Client
