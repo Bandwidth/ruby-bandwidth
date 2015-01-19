@@ -19,7 +19,7 @@ module Bandwidth
           user_id = opts[:user_id]
         end
       end
-      @concat_user_path = lambda {|path| "/users/#{userId}" + (if path[0] == "/" then path else "/#{path}" end) }
+      @concat_user_path = lambda {|path| "/users/#{user_id}" + (if path[0] == "/" then path else "/#{path}" end) }
       @build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
       @set_adapter = lambda {|faraday| faraday.adapter(Faraday.default_adapter)}
       @create_connection = lambda{||
@@ -66,6 +66,10 @@ module Bandwidth
         parsed_body = JSON.parse(response.body)
         raise Errors::GenericError.new(parsed_body['code'], parsed_body['message'])
       end
+    end
+
+    def concat_user_path(path)
+      @concat_user_path.call(path)
     end
 
     protected

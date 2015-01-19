@@ -24,14 +24,26 @@ end
 
 module Helper
   def self.get_client()
-    StubbedClient.new('userId', 'token', 'secret')
+    Client.new('userId', 'token', 'secret')
+  end
+
+  def self.setup_environment()
+    Client.global_options[:user_id] = 'userId'
+    Client.global_options[:api_token] = 'token'
+    Client.global_options[:api_secret] = 'secret'
+    @stubs = Faraday::Adapter::Test::Stubs.new()
+  end
+
+  def self.stubs()
+    @stubs
   end
 end
 
-class StubbedClient < Bandwidth::Client
+class  Bandwidth::Client
+  alias_method :old_initialize, :initialize
   def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1')
-    super(user_id, api_token, api_secret, api_endpoint, api_version)
-    @stubs = Faraday::Adapter::Test::Stubs.new()
+    old_initialize(user_id, api_token, api_secret, api_endpoint, api_version)
+    @stubs = if user_id  then  Faraday::Adapter::Test::Stubs.new() else Helper.stubs end
     @set_adapter = lambda{|faraday| faraday.adapter(:test, @stubs)}
   end
  def stubs()

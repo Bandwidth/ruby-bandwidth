@@ -65,4 +65,15 @@ describe Bandwidth::Client do
     end
   end
 
+  describe '#concat_user_path' do
+    client = nil
+    before :each do
+      client = Helper.get_client()
+    end
+
+    it 'should add user id to path' do
+      expect(client.concat_user_path('test')).to eql('/users/userId/test')
+      expect(client.concat_user_path('/test1')).to eql('/users/userId/test1')
+    end
+  end
 end
