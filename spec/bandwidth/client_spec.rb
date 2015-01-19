@@ -1,5 +1,3 @@
-require 'helper'
-
 describe Bandwidth::Client do
   describe '#initialize' do
     it 'should create instance of Client' do

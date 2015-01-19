@@ -6,7 +6,6 @@ module Bandwidth
         if(args.size == 0 || !(args[0] || {}).is_a?(Client))
           args.unshift(Client.new())
         end
-        p args
         old.call(*args)
       end
     end

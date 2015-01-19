@@ -1,5 +1,3 @@
-require 'helper'
-
 describe Bandwidth::ClientWrapper do
   describe 'wrap_client_arg' do
     it 'should pass Client instance to method as first arg if it is missing' do

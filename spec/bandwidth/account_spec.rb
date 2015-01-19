@@ -1,5 +1,3 @@
-require 'helper'
-
 describe Bandwidth::Account do
   client = nil
   before :each do
