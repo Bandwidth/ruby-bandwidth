@@ -52,13 +52,13 @@ module Bandwidth
       connection = @create_connection.call()
       response =  if method == :get || method == :delete
                     connection.run_request(method, @build_path.call(path), nil, nil) do |req|
-                      req.params = d unless d.empty?
+                      req.params = d unless d == nil || d.empty?
                     end
                   else
                     connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
                   end
       check_response(response)
-      if response.body.size > 0 then symbolize(JSON.parse(response.body)) else {} end
+      if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end
     end
 
     def check_response(response)

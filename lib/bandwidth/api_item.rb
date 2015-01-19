@@ -2,8 +2,8 @@ module Bandwidth
   module ApiItem
     def initialize(data={}, client = nil)
       @client = client || Client.new()
-      @data = data || {}
-      data.each do |k,v|
+      @data = (data || {}).clone()
+      @data.each do |k,v|
         self.define_singleton_method(k) do
           @data[k]
         end
@@ -11,6 +11,10 @@ module Bandwidth
           @data[k] = val
         end
       end
+    end
+
+    def to_data()
+      @data.clone()
     end
   end
 end
