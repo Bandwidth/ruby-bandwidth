@@ -22,6 +22,7 @@ module Bandwidth
       id = Client.get_id_from_location_header(headers[:location])
       self.get(client, id)
     end
+    wrap_client_arg :create
 
     def update(data)
       @client.make_request(:post, @client.concat_user_path("#{APPLICATION_PATH}/#{id}"), data)[0]
