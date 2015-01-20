@@ -14,6 +14,7 @@ require 'bandwidth/conference_member'
 require 'bandwidth/error'
 
 
+require 'bandwidth/phone_number'
 require 'bandwidth/recording'
 
 require 'bandwidth/version'
