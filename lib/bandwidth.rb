@@ -12,8 +12,7 @@ require 'bandwidth/call'
 require 'bandwidth/conference'
 require 'bandwidth/conference_member'
 require 'bandwidth/error'
-
-
+require 'bandwidth/message'
 require 'bandwidth/number_info'
 require 'bandwidth/phone_number'
 require 'bandwidth/recording'
