@@ -29,7 +29,11 @@ module Bandwidth
           @set_adapter.call(faraday)
         }
       }
+      @api_endpoint = api_endpoint
+      @api_version = api_version
     end
+
+    attr_reader :api_endpoint, :api_version
 
     @@global_options = {}
 
@@ -70,6 +74,10 @@ module Bandwidth
 
     def concat_user_path(path)
       @concat_user_path.call(path)
+    end
+
+    def create_connection()
+      @create_connection.call()
     end
 
     protected

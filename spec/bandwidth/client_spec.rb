@@ -1,3 +1,5 @@
+require 'base64'
+
 describe Bandwidth::Client do
   describe '#initialize' do
     it 'should create instance of Client' do
@@ -72,6 +74,20 @@ describe Bandwidth::Client do
     it 'should add user id to path' do
       expect(client.concat_user_path('test')).to eql('/users/userId/test')
       expect(client.concat_user_path('/test1')).to eql('/users/userId/test1')
+    end
+  end
+
+
+  describe '#create_connection' do
+    client = nil
+    before :each do
+      client = Helper.get_client()
+    end
+
+    it 'should create new faraday connection' do
+      connection = client.create_connection()
+      expect(connection).to be_a(Faraday::Connection)
+      expect(connection.headers['Authorization']).to eql("Basic #{Base64.strict_encode64('token:secret')}")
     end
   end
 end
