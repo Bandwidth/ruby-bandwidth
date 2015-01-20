@@ -58,7 +58,7 @@ module Bandwidth
                     connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
                   end
       check_response(response)
-      if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end
+      [if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end, symbolize(response.headers || {})]
     end
 
     def check_response(response)

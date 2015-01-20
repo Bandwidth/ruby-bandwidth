@@ -22,6 +22,14 @@ describe Bandwidth::Application do
     end
   end
 
+  describe '#create' do
+    it 'should create new item' do
+      client.stubs.post('/v1/users/userId/applications', '{"name":"app1","incomingCallUrl":"http://host1"}') {|env| [201, {'Location' => '/v1/users/userId/applications/1'}, '']}
+      client.stubs.get('/v1/users/userId/applications/1') {|env| [200, {}, '{"id":"1","name":"app1","incomingCallUrl":"http://host1"}']}
+      expect(Application.create(client, {:name=>'app1', :incoming_call_url=>'http://host1'}).to_data()).to eql({:id=>'1', :name=>'app1', :incoming_call_url=>'http://host1'})
+    end
+  end
+
   describe '#update' do
     it 'should change item' do
       client.stubs.post('/v1/users/userId/applications/1', '{"name":"new name"}') {|env| [200, {}, '']}
