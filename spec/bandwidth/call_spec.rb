@@ -48,22 +48,6 @@ describe Bandwidth::Call do
     end
   end
 
-  describe '#speak_sentence' do
-    it 'should speak a sentence' do
-      client.stubs.post('/v1/users/userId/calls/1/audio', '{"gender":"female","locale":"en_US","voice":"kate","sentence":"test","tag":null}') {|env| [200, {}, '']}
-      item = Call.new({:id=>'1'}, client)
-      item.speak_sentence('test')
-    end
-  end
-
-  describe '#play_recording' do
-    it 'should play recording' do
-      client.stubs.post('/v1/users/userId/calls/1/audio', '{"fileUrl":"http://host1"}') {|env| [200, {}, '']}
-      item = Call.new({:id=>'1'}, client)
-      item.play_recording('http://host1')
-    end
-  end
-
   describe '#set_dtmf' do
     it 'should set dtmf value' do
       client.stubs.post('/v1/users/userId/calls/1/dtmf', '{"dtmfOut":"value"}') {|env| [200, {}, '']}

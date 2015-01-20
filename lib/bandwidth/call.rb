@@ -3,6 +3,7 @@ module Bandwidth
   class Call
     extend ClientWrapper
     include ApiItem
+    include PlayAudioExtensions
 
     def self.get(client, id)
       item = client.make_request(:get, client.concat_user_path("#{CALL_PATH}/#{id}"))[0]
@@ -30,15 +31,6 @@ module Bandwidth
 
     def play_audio(data)
       @client.make_request(:post, @client.concat_user_path("#{CALL_PATH}/#{id}/audio"), data)[0]
-    end
-
-    def speak_sentence(sentence, tag = nil)
-      play_audio({:gender => "female", :locale => "en_US",
-                  :voice => "kate", :sentence => sentence, :tag => tag})
-    end
-
-    def play_recording(url)
-      play_audio({:file_url => url})
     end
 
     def set_dtmf(dtmf)
