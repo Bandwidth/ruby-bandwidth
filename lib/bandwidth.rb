@@ -18,4 +18,9 @@ require 'bandwidth/number_info'
 require 'bandwidth/phone_number'
 require 'bandwidth/recording'
 
+
+require 'bandwidth/xml/response'
+require 'bandwidth/xml/xml_verb'
+require 'bandwidth/xml/verbs/gather'
+
 require 'bandwidth/version'

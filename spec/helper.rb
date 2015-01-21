@@ -52,6 +52,10 @@ module Helper
         v
     end
   end
+
+  def self.to_xml(verb)
+    Xml::Response.new([verb]).to_xml()
+  end
 end
 
 class  Bandwidth::Client
