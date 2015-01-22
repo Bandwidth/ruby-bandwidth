@@ -1,5 +1,6 @@
 module Bandwidth
   module Errors
+    # Generic error class
     class GenericError < StandardError
       # @return [String] Error code
       attr_reader :code

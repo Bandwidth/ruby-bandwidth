@@ -1,5 +1,10 @@
 module Bandwidth
+  # Module which adds common operations for all Catapult api related classes
   module ApiItem
+    # Initializer
+    #
+    # @param data [Hash] Hash with data of api item. Initializer will create accessors for each key of this hash
+    # @param client [Client] OPtional client instance. If omitted Client instance with default parameters will be used
     def initialize(data={}, client = nil)
       @client = client || Client.new()
       @data = (data || {}).clone()
@@ -13,6 +18,7 @@ module Bandwidth
       end
     end
 
+    # Return data of api item as hash
     def to_data()
       @data.clone()
     end
