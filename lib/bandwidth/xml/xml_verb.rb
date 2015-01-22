@@ -1,5 +1,6 @@
 module Bandwidth
   module Xml
+    # Common functions of each verb class
     module XmlVerb
       def initialize(data = nil)
         @data = (data || {}).clone()

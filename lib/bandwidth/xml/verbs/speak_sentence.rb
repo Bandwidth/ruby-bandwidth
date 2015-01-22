@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The SpeakSentence verb is used to convert any text into speak for the caller
       class SpeakSentence
         include XmlVerb
 

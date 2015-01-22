@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The Transfer verb is used to transfer the call to another number
       class Transfer
         include XmlVerb
 

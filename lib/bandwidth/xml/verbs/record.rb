@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The Record verb allow call recording
       class Record
         include XmlVerb
 

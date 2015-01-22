@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The Reject verb is used to reject incoming calls
       class Reject
         include XmlVerb
 

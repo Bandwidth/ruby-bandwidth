@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The Hangup verb is used to hangup current call
       class Hangup
         include XmlVerb
 

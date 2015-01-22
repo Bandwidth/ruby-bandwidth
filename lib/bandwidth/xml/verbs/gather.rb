@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The Gather verb is used to collect digits for some period of time
       class Gather
         include XmlVerb
 

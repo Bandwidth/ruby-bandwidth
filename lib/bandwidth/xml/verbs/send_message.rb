@@ -1,6 +1,7 @@
 module Bandwidth
   module Xml
     module Verbs
+      # The SendMessage is used to send a text message
       class SendMessage
         include XmlVerb
 
