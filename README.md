@@ -36,7 +36,6 @@ calls = Call.list(client, {:page => 1})
 
 ```
 
-
 # Useful links
 
 [Original API  docs](https://catapult.inetwork.com/docs/)
