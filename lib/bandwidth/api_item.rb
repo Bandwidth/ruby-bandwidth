@@ -4,7 +4,7 @@ module Bandwidth
     # Initializer
     #
     # @param data [Hash] Hash with data of api item. Initializer will create accessors for each key of this hash
-    # @param client [Client] OPtional client instance. If omitted Client instance with default parameters will be used
+    # @param client [Client] Optional client instance. If omitted Client instance with default parameters will be used
     def initialize(data={}, client = nil)
       @client = client || Client.new()
       @data = (data || {}).clone()

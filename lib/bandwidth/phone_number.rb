@@ -22,7 +22,7 @@ module Bandwidth
     # @param query [Hash] query options
     # @return [Array] list of numbers
     # @example
-    #   numbers = PhoneNumber.lis(client)
+    #   numbers = PhoneNumber.list(client)
     def self.list(client, query = nil)
       client.make_request(:get, client.concat_user_path(PHONENUMBER_PATH), query)[0].map do |item|
         PhoneNumber.new(item, client)

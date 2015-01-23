@@ -35,7 +35,7 @@ module Bandwidth
     # @param data [Hash] hash of values to create application
     # @return [Application] created application
     # @example
-    #   app = Application.create(clirnt, :name => "new app")
+    #   app = Application.create(client, :name => "new app")
     def self.create(client, data)
       headers = client.make_request(:post, client.concat_user_path(APPLICATION_PATH), data)[1]
       id = Client.get_id_from_location_header(headers[:location])

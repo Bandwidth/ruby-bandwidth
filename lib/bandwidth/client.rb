@@ -17,7 +17,7 @@ module Bandwidth
     # @example
     #   client = Client.new("userId", "token", "secret")
     #   client = Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret") # with has of options
-    #   client = Cleint.new() #options from Client.global_options will be used here
+    #   client = Client.new() #options from Client.global_options will be used here
     def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1')
       if api_token == nil && api_secret == nil
         if  user_id == nil

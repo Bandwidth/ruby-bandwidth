@@ -33,7 +33,7 @@ module Bandwidth
 
     # Create a bridge
     # @param client [Client] optional client instance to make requests
-    # @param data  [Hash] data to create a bridgw
+    # @param data  [Hash] data to create a bridge
     # @return [Bridge] created bridge
     # @example
     #   bridge = Bridge.create(client, {:call_ids => ["id1", "id2"]})
@@ -47,7 +47,7 @@ module Bandwidth
     # Update a bridge
     # @param data [Hash] changed data
     # @example
-    #   bridge.updatei(:bridge_audioo => true, :call_ids => ["id3"]) #add a call to the bridge
+    #   bridge.updatei(:bridge_audio => true, :call_ids => ["id3"]) #add a call to the bridge
     def update(data)
       @client.make_request(:post, @client.concat_user_path("#{BRIDGE_PATH}/#{id}"), data)[0]
     end
