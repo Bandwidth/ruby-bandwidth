@@ -8,7 +8,7 @@ SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
 SimpleCov.start()
 
 
-require 'bandwidth'
+require 'ruby-bandwidth'
 require 'rspec'
 
 RSpec.configure do |config|

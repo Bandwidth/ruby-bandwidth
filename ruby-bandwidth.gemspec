@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'bandwidth/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "bandwidth"
+  spec.name          = "ruby-bandwidth"
   spec.version       = Bandwidth::VERSION
   spec.authors       = ["Andrey Belchikov"]
   spec.description   = "Gem for integrating to Bandwidth's Catapult API"
@@ -22,4 +22,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "certified"
 
   spec.add_development_dependency "bundler", "~> 1.3"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "yard"
 end

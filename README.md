@@ -9,11 +9,11 @@ Gem for integrating to Bandwidth's Catapult  API
 
 Via rubygems:
 
-    gem install bandwidth
+    gem install ruby-bandwidth
 
 or add to your Gemfile:
 
-    gem 'bandwidth'
+    gem "ruby-bandwidth"
 
 # Usage
 
@@ -21,8 +21,8 @@ or add to your Gemfile:
 
 # Using client instance directly
 
-client = Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret")
-calls = Call.list(client, {:page => 1})
+client = Bandwidth::Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret")
+calls = Bandwidth::Call.list(client, {:page => 1})
 
 # Or you can use default client instance
 # You should set up its global options before using of api functions
@@ -32,9 +32,18 @@ calls = Call.list(client, {:page => 1})
   Client.global_options = {:user_id => "userId", :api_token => "token", :api_secret => "secret"}
 # Now you can call any functions without first arg 'client'
 
-  calls = Call.list(:page=>1)
+  calls = Bandwidth::Call.list(:page=>1)
 
 ```
+
+# Documentation generation
+
+Generates documentation:
+
+    yard doc
+
+
+
 
 # Useful links
 
