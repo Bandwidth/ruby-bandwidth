@@ -35,7 +35,7 @@ module Bandwidth
     # @example
     #   domain.delete()
     def delete()
-      @client.make_request(:delete, @client.concat_user_path("#{DOMAIN_PATH}/#{id}"), data)[0]
+      @client.make_request(:delete, @client.concat_user_path("#{DOMAIN_PATH}/#{id}"))[0]
     end
 
     alias_method :destroy, :delete
@@ -78,8 +78,9 @@ module Bandwidth
     # Delete an endpoint
     # @example
     #   domain.delete_endpoint("id")
-    def delete_endpoint(id)
-      endpoint = EndPoint.new({:id => id}, @client)
+    def delete_endpoint(endpoint_id)
+      endpoint = EndPoint.new({:id => endpoint_id}, @client)
+      endpoint.domain_id = id
       endpoint.delete()
     end
 
