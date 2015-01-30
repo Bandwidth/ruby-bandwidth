@@ -12,7 +12,7 @@ module Bandwidth
     # @example
     #   result = AvailableNumber.search_toll_free(client, :quantity=>20)
     def self.search_toll_free(client, query = nil)
-      client.make_request(:get, client.concat_user_path("#{AVAILABLE_NUMBER_PATH}/tollFree"), query)[0]
+      client.make_request(:get, "#{AVAILABLE_NUMBER_PATH}/tollFree", query)[0]
     end
     wrap_client_arg :search_toll_free
 
@@ -23,7 +23,7 @@ module Bandwidth
     # @example
     #   result = AvailableNumber.search_local(client, {:state=>"state", :zip=>"zip", :area_code=>"code"})
     def self.search_local(client, query = nil)
-      client.make_request(:get, client.concat_user_path("#{AVAILABLE_NUMBER_PATH}/local"), query)[0]
+      client.make_request(:get, "#{AVAILABLE_NUMBER_PATH}/local", query)[0]
     end
     wrap_client_arg :search_local
   end

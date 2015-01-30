@@ -31,14 +31,14 @@ describe Bandwidth::AvailableNumber do
 
   describe '#search_toll_free' do
     it 'should return found items' do
-      client.stubs.get('/v1/users/userId/availableNumbers/tollFree?criteria=criteria') {|env| [200, {}, json]}
+      client.stubs.get('/v1/availableNumbers/tollFree?criteria=criteria') {|env| [200, {}, json]}
       expect(AvailableNumber.search_toll_free(client, {:criteria=>'criteria'})).to eql(items)
     end
   end
 
   describe '#search_local' do
     it 'should return found items' do
-      client.stubs.get('/v1/users/userId/availableNumbers/local?criteria=criteria') {|env| [200, {}, json]}
+      client.stubs.get('/v1/availableNumbers/local?criteria=criteria') {|env| [200, {}, json]}
       expect(AvailableNumber.search_local(client, {:criteria=>'criteria'})).to eql(items)
     end
   end
