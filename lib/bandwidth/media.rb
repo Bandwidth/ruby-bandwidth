@@ -22,13 +22,13 @@ module Bandwidth
     # @param io [IO] io object file file content (file, string, etc)
     # @param media_type media type of file
     # @example
-    #   Media.upload((client, "file.pdf", File.new("/path/to/file.pdf"), "application/pdf")
+    #   Media.upload((client, "file.pdf", File.open("/path/to/file.pdf", "r"), "application/pdf")
     def self.upload(client, name, io, media_type = nil)
       connection = client.create_connection()
       # FIXME use streams directly when Faraday will be support streaming
       buf = io.read()
       response = connection.put("/#{client.api_version}#{client.concat_user_path(MEDIA_PATH)}/#{URI.encode(name)}") do |req|
-        req.headers['Content-Length'] = buf.size
+        req.headers['Content-Length'] = buf.size.to_s
         req.headers['Content-Type'] = media_type || 'application/octet-stream'
         req.body = buf
       end

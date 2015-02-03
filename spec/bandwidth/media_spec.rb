@@ -37,8 +37,8 @@ describe Bandwidth::Media do
 
   describe '#upload' do
     it 'should upload a file' do
-      client.stubs.put('/v1/users/userId/media/file1', '123', {'Content-Type' => 'text/plain', 'Content-Length' => 3}) {|env| [200, {}, '']}
-      client.stubs.put('/v1/users/userId/media/file2', '123', {'Content-Type' => 'application/octet-stream', 'Content-Length' => 3}) {|env| [200, {}, '']}
+      client.stubs.put('/v1/users/userId/media/file1', '123', {'Content-Type' => 'text/plain', 'Content-Length' => '3'}) {|env| [200, {}, '']}
+      client.stubs.put('/v1/users/userId/media/file2', '123', {'Content-Type' => 'application/octet-stream', 'Content-Length' => '3'}) {|env| [200, {}, '']}
       Media.upload(client, 'file1', StringIO.new('123'), 'text/plain')
       Media.upload(client, 'file2', StringIO.new('123'))
     end
