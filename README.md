@@ -135,9 +135,9 @@ List recordings
 Generate Bandwidth XML
 
 ```ruby
-  response = Xml::Response.new()
-  speak_sentence = Xml::Verbs::SpeakSentence.new({:sentence => "Transferring your call, please wait.", :voice => "paul", :gender => "male", :locale => "en_US"})
-  transfer = Xml::Verbs::Transfer.new({
+  response = Bandwidth::Xml::Response.new()
+  speak_sentence = Bandwidth::Xml::Verbs::SpeakSentence.new({:sentence => "Transferring your call, please wait.", :voice => "paul", :gender => "male", :locale => "en_US"})
+  transfer = Bandwidth::Xml::Verbs::Transfer.new({
             :transfer_to => "+13032288849",
             :transfer_caller_id => "private",
             :speak_sentence => {
@@ -148,11 +148,11 @@ Generate Bandwidth XML
             }
         })
 
-  hangup = Xml::Verbs::Hangup.new()
+  hangup = Bandwidth::Xml::Verbs::Hangup.new()
   response << speak_sentence << transfer << hangup 
 
   # as alternative we can pass list of verbs to constructor of Response
-  # response = Xml::Response.new([speak_sentence, transfer, hangup])
+  # response = Bandwidth::Xml::Response.new([speak_sentence, transfer, hangup])
 
   puts response.to_xml()
 ```
