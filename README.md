@@ -36,7 +36,7 @@ or add to your Gemfile:
 ## Getting Started
 
 * Install `ruby-bandwidth`,
-* **Get user id, api token and secret**- to use the Catapult API you need these data.  You can get them [here](https://catapult.inetwork.com/pages/catapult.jsf) on the tab "Account",
+* **Get user id, api token and secret** - to use the Catapult API you need these data.  You can get them [here](https://catapult.inetwork.com/pages/catapult.jsf) on the tab "Account",
 * **Set user id, api token and secret** - you can do that with 2 ways:
 
 ```ruby
@@ -69,62 +69,94 @@ Read [Catapult Api documentation](https://catapult.inetwork.com/docs/api-docs/) 
 
 List all calls from special number
 
-```
+```ruby
   calls = Bandwidth::Call.list({:from => "+19195551212"})
 ```
 
 List all received messages
 
-```
+```ruby
   messages = Bandwidth::Message.list({:state => "received"})
 ```
 
 Send SMS
 
-```
+```ruby
   message = Bandwidth::Message.create({:from => "+19195551212", :to => "+191955512142", :text => "Test"})
 ```
 
 Upload file 
 
-```
+```ruby
   Bandwidth::Media.upload("avatar.png", File.open("/local/path/to/file.png", "r"), "image/png")
 ```
 
 Make a call
 
-```
+```ruby
   Bandwidth::Call.create({:from => "+19195551212", :to => ""+191955512142"})
 ```
 
 Reject incoming call
 
-```
+```ruby
   call.reject_incoming()
 ```
 
 Connect 2 calls to a bridge
 
-```
+```ruby
   Bandwidth::Bridge.create({:call_ids => [call_id1, call_id2]})
 ```
 
 Search available local numbers to buy
 
-```
+```ruby
   numbers = Bandwidth::AvailableNumber.search_local({:state =>"NC", :city => "Cary"})
 ```
 Get CNAM info for a number
 
-```
+```ruby
   info = Bandwidth::NumberInfo.get("+19195551212")
 ```
 
 Buy a phone number
 
-```
+```ruby
   number = Bandwidth::PhoneNumber.create({:number => "+19195551212"})
 ```
+
+List recordings
+
+```ruby
+  list = Bandwidth::Recording.list()
+```
+
+Generate Bandwidth XML
+
+```ruby
+  response = Xml::Response.new()
+  speak_sentence = Xml::Verbs::SpeakSentence.new({:sentence => "Transferring your call, please wait.", :voice => "paul", :gender => "male", :locale => "en_US"})
+  transfer = Xml::Verbs::Transfer.new({
+            :transfer_to => "+13032288849",
+            :transfer_caller_id => "private",
+            :speak_sentence => {
+                :sentence => "Inner speak sentence.",
+                :voice => "paul",
+                :gender => "male",
+                :locale => "en_US"
+            }
+        })
+
+  hangup = Xml::Verbs::Hangup.new()
+  response << speak_sentence << transfer << hangup 
+
+  # as alternative we can pass list of verbs to constructor of Response
+  # response = Xml::Response.new([speak_sentence, transfer, hangup])
+
+  puts response.to_xml()
+```
+
 
 See directory `samples` for more examples.
 See [ruby-bandwidth-example](https://github.com/bandwidthcom/ruby-bandwidth-example) for more complex examples of using this module.
