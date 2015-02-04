@@ -94,7 +94,7 @@ Upload file
 Make a call
 
 ```ruby
-  Bandwidth::Call.create({:from => "+19195551212", :to => ""+191955512142"})
+  call = Bandwidth::Call.create({:from => "+19195551212", :to => ""+191955512142"})
 ```
 
 Reject incoming call
@@ -103,10 +103,20 @@ Reject incoming call
   call.reject_incoming()
 ```
 
+Create a gather
+```ruby
+  gather = call.create_gather({:max_digits => 3, :inter_digit_timeout => 5, :prompt => {:sentence => "Please enter 3 digits"}})
+```
+
+Start a conference
+```ruby
+  conference = Bandwidth::Conference.create({:from => "+19195551212"})
+```
+
 Connect 2 calls to a bridge
 
 ```ruby
-  Bandwidth::Bridge.create({:call_ids => [call_id1, call_id2]})
+  bridge = Bandwidth::Bridge.create({:call_ids => [call_id1, call_id2]})
 ```
 
 Search available local numbers to buy
