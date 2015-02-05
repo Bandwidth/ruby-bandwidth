@@ -22,5 +22,15 @@ module Bandwidth
     def to_data()
       @data.clone()
     end
+
+    # Return item of @data by name
+    def [] (name)
+      @data[name]
+    end
+
+    # Set value of @data's item by name
+    def []= (name, value)
+      @data[name] = value
+    end
   end
 end

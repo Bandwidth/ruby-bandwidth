@@ -36,4 +36,22 @@ describe Bandwidth::ApiItem do
       expect(item.to_data()).to eql(data)
     end
   end
+
+  describe '#[]' do
+    it 'should return item of @data by key' do
+      data = {:test => true}
+      item = TestItem.new(data)
+      expect(item[:test]).to eql(true)
+    end
+  end
+
+  describe '#[]=' do
+    it 'should change value of  item of @data by key' do
+      data = {:test => true}
+      item = TestItem.new(data)
+      expect(item[:test]).to eql(true)
+      item[:test] = false
+      expect(item[:test]).to eql(false)
+    end
+  end
 end
