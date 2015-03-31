@@ -28,14 +28,27 @@ module Bandwidth
 
     # Send text messages
     # @param client [Client] optional client instance to make requests
-    # @param data [Hash] options of new message
-    # @return [Hash] created message
+    # @param data [Hash|Array] options of new message or list of messages
+    # @return [Hash] created message or statuses of list of messages
     # @example
     #   message = Message.create(client, {:from=>"from", :to=>"to", :text=>"text"})
+    #   statuses = Message.create(client, [{:from=>"from1", :to=>"to1", :text=>"text1"}, {:from=>"from2", :to=>"to2", :text=>"text2"}])
     def self.create(client, data)
-      headers = client.make_request(:post, client.concat_user_path(MESSAGE_PATH), data)[1]
-      id = Client.get_id_from_location_header(headers[:location])
-      self.get(client, id)
+      res = client.make_request(:post, client.concat_user_path(MESSAGE_PATH), data)
+      if data.is_a? Array
+        res[0].map do |i|
+          if i[:result] == "error"
+            {:error => StandardError.new(i[:error][:message])}
+          else
+            items = (i[:location] || '').split('/')
+            if items.size < 2 then  {:error =>  StandardError.new('Missing id in the location header')} else {:id => items.last} end
+          end
+        end
+      else
+        headers = res[1]
+        id = Client.get_id_from_location_header(headers[:location])
+        self.get(client, id)
+      end
     end
     wrap_client_arg :create
   end

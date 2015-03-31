@@ -85,6 +85,11 @@ Send SMS
   message = Bandwidth::Message.create({:from => "+19195551212", :to => "+191955512142", :text => "Test"})
 ```
 
+Send some SMSes
+
+```ruby
+  statuses = Bandwidth::Message.create([{:from => "+19195551212", :to => "+191955512142", :text => "Test"}, {:from => "+19195551212", :to => "+191955512143", :text => "Test2"}])
+```
 Upload file 
 
 ```ruby
