@@ -4,9 +4,11 @@ module Bandwidth
     # Speak a sentence
     # @param sentence [String[ sentence to speak
     # @param tag [String] optional tag value
-    def speak_sentence(sentence, tag = nil)
-      play_audio({:gender => "female", :locale => "en_US",
-                  :voice => "kate", :sentence => sentence, :tag => tag})
+    # @param gender [String] optional gender of voice
+    # @param voice [String] optional voice name
+    def speak_sentence(sentence, tag = nil, gender = "female", voice = "kate")
+      play_audio({:gender => gender || "female", :locale => "en_US",
+                  :voice => voice || "kate", :sentence => sentence, :tag => tag})
     end
 
     # Play an audio by url

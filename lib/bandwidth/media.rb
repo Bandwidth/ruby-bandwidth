@@ -59,5 +59,18 @@ module Bandwidth
       client.make_request(:delete, client.concat_user_path("#{MEDIA_PATH}/#{URI.encode(name)}"))[0]
     end
     wrap_client_arg :delete
+
+    # Get information about a media file
+    # @param client [Client] optional client instance to make requests
+    # @param name [String] file name
+    # @return [Hash] content_type and content_length
+    # @example
+    #   Media.get_info(client, "file.pdf")
+    def self.get_info(client, name)
+      headers = client.make_request(:head, client.concat_user_path("#{MEDIA_PATH}/#{URI.encode(name)}"))[1]
+      puts headers
+      {:content_type => headers[:content_type], :content_length => headers[:content_length]}
+    end
+    wrap_client_arg :get_info
   end
 end

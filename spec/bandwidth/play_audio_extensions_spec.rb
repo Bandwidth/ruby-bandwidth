@@ -10,6 +10,9 @@ describe Bandwidth::PlayAudioExtensions do
     it 'should speak a sentence' do
       expect(test.speak_sentence('test', 'tag')).to eql({:gender => 'female', :locale => 'en_US', :voice => 'kate', :sentence => 'test', :tag =>'tag'})
     end
+    it 'should speak a sentence (with another voice)' do
+      expect(test.speak_sentence('test', 'tag', 'male', 'tom')).to eql({:gender => 'male', :locale => 'en_US', :voice => 'tom', :sentence => 'test', :tag =>'tag'})
+    end
   end
 
   describe '#play_recording' do
