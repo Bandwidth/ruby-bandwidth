@@ -17,8 +17,8 @@ module Bandwidth
     # Create auth token.
     # @example
     #   token = endpoint.create_auth_token()
-    def create_auth_token()
-      @client.make_request(:post, @client.concat_user_path("#{DOMAIN_PATH}/#{domain_id}/endpoints/#{id}/tokens"))[0]
+    def create_auth_token(expires = 86400)
+      @client.make_request(:post, @client.concat_user_path("#{DOMAIN_PATH}/#{domain_id}/endpoints/#{id}/tokens"), {expires: expires})[0]
     end
 
     # Delete auth token.
