@@ -32,6 +32,7 @@ module Bandwidth
           user_id = opts[:user_id]
         end
       end
+      raise Errors::MissingCredentialsError.new() if (user_id || '').length == 0 || (api_token || '').length == 0 || (api_secret || '').length == 0
       @concat_user_path = lambda {|path| "/users/#{user_id}" + (if path[0] == "/" then path else "/#{path}" end) }
       @build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
       @set_adapter = lambda {|faraday| faraday.adapter(Faraday.default_adapter)}

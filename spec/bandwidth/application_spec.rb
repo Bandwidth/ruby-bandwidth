@@ -13,6 +13,13 @@ describe Bandwidth::Application do
       client.stubs.get('/v1/users/userId/applications/1') {|env| [200, {}, '{"id":"1","name":"app1","incomingCallUrl":"http://host1"}']}
       expect(Application.get(client, '1').to_data()).to eql({:id=>'1', :name=>'app1', :incoming_call_url=>'http://host1'})
     end
+    it 'should raise MissingCredentialsError if auth data is missing' do
+      begin
+        expect(Application.get(Client.new('', '', ''), '1').to_data()).to eql({:id=>'1', :name=>'app1', :incoming_call_url=>'http://host1'})
+        raise "An error is estimated"
+      rescue Errors::MissingCredentialsError
+      end
+    end
   end
 
   describe '#list' do
