@@ -212,12 +212,11 @@ Generate Bandwidth XML
 See directory `samples` for more examples.
 See [ruby-bandwidth-example](https://github.com/bandwidthcom/ruby-bandwidth-example) for more complex examples of using this module.
 
-
-
 # Documentation generation
 
 Generates documentation:
 
     yard doc
 
-
+# Samples
+[More sample applications](https://github.com/bandwidthcom/ruby-bandwidth-example)
