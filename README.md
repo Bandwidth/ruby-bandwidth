@@ -2,7 +2,7 @@
 
 [![Build](https://travis-ci.org/bandwidthcom/ruby-bandwidth.png)](https://travis-ci.org/bandwidthcom/ruby-bandwidth)
 
-Bandwidth Catapult Ruby API
+Bandwidth [Bandwidth's App Platform](ap.bandwidth.com/?utm_medium=social&utm_source=github&utm_campaign=dtolb&utm_content=) Ruby SDK
 
 With ruby-bandwidth  you have access to the entire set of API methods including:
 * **Account** - get user's account data and transactions,
