@@ -40,6 +40,7 @@ module Bandwidth
         Faraday.new(api_endpoint) { |faraday|
           faraday.basic_auth(api_token, api_secret)
           faraday.headers['Accept'] = 'application/json'
+          faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
           @set_adapter.call(faraday)
         }
       }
