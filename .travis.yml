@@ -5,3 +5,4 @@ rvm:
   - '2.2.4'
   - '2.3.0'
 
+after_success: scripts/deploy_docs.sh
