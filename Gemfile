@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 gem 'rake'
+gem 'activesupport', '4.2.7.1'
 
 group :test do
   gem 'coveralls'
