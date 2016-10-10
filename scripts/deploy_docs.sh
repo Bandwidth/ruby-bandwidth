@@ -1,7 +1,7 @@
 #!/bin/bash
-
-# Update docs only on PR to 'master'
-[ "$TRAVIS_PULL_REQUEST_BRANCH" == "master" ] || exit 0
+export
+# Update docs only on 'master' changes
+[ "$TRAVIS_BRANCH" == "master" ] || exit 0
 rake yard:build
 git add -f ./doc
 git config user.name "Travis CI"
