@@ -5,7 +5,7 @@ module Bandwidth
     # Root class for Bandwidth XML
     class Response
       # Initializer
-      # @param vers [Array] optional list of verbs to include into response
+      # @param verbs [Array] optional list of verbs to include into response
       def initialize(verbs = nil)
         @verbs = verbs || []
       end

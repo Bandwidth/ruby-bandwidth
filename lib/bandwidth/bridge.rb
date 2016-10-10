@@ -20,7 +20,7 @@ module Bandwidth
 
     # Get a list of previous bridges
     # @param client [Client] optional client instance to make requests
-    # @query [Hash] hash with query parameters
+    # @param query [Hash] hash with query parameters
     # @return [Array] array of Bridge instances
     # @example
     #   list = Bridge.list(client)

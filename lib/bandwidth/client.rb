@@ -53,11 +53,13 @@ module Bandwidth
     @@global_options = {}
 
     # Return global options
+    # @return [Hash] Options
     def Client.global_options
       @@global_options
     end
 
     # Set global options
+    # @param v [Hash] Options to set
     def Client.global_options=(v)
       @@global_options = v
     end
@@ -73,7 +75,7 @@ module Bandwidth
 
     # Make HTTP request to Catapult API
     # @param method [Symbol] http method to make
-    # @param path [string] path of url (exclude api verion and endpoint) to make call
+    # @param path [String] path of url (exclude api verion and endpoint) to make call
     # @param data [Hash] data  which will be sent with request (for :get and :delete request they will be sent with query in url)
     # @return [Array] array with 2 elements: parsed json data of response and response headers
     def make_request(method, path, data = {})
@@ -87,7 +89,8 @@ module Bandwidth
                     connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
                   end
       check_response(response)
-      [if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end, symbolize(response.headers || {})]
+      r = if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end
+      [r, symbolize(response.headers || {})]
     end
 
     # Check response object and raise error if status code >= 400

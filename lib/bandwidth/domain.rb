@@ -7,7 +7,6 @@ module Bandwidth
 
     # Get created domains
     # @param client [Client] optional client instance to make requests
-    # @param id [String] id of a domain
     # @return [Array] list of domains
     # @example
     #   domains = Domain.list(client)
