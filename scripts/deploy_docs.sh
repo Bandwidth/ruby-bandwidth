@@ -1,7 +1,9 @@
 #!/bin/bash
 export
-# Update docs only on 'master' changes
+# Update docs only on 'master' changes (and only for ruby 2.3)
+[ "$TRAVIS_RUBY_VERSION" === "2.3.0" ] || exit 0
 [ "$TRAVIS_BRANCH" == "master" ] || exit 0
+[ "$TRAVIS_EVENT_TYPE" == "push" ] || exit 0 # after apply PR
 rake yard:build
 git add -f ./doc
 git config user.name "Travis CI"
