@@ -32,7 +32,7 @@ module Bandwidth
 
     # Allocate a number so you can use it
     # @param client [Client] optional client instance to make requests
-    # @data [Hash]idata about new number
+    # @param data [Hash] data about new number
     # @return [PhoneNumber] created number information
     def self.create(client, data)
       headers = client.make_request(:post, client.concat_user_path(PHONENUMBER_PATH), data)[1]

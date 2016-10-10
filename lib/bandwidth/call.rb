@@ -101,7 +101,7 @@ module Bandwidth
     # Get the gather DTMF parameters and results
     # @param gather_id [String] id of gather
     # @return [Hash] gather options
-    # @xample
+    # @example
     #   gather = call.get_gather("id")
     def get_gather(gather_id)
       @client.make_request(:get, @client.concat_user_path("#{CALL_PATH}/#{id}/gather/#{gather_id}"))[0]

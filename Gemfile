@@ -7,4 +7,8 @@ group :test do
   gem 'simplecov'
 end
 
+group :development do
+  gem 'yard-ghpages'
+end
+
 gemspec
