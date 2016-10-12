@@ -1,7 +1,11 @@
 module Bandwidth
+  # LazyInstance will return data on demand
   class LazyInstance
     attr_reader :id
 
+    # Initializer
+    # @param id [String] Id of instance
+    # @param get_instance [Proc] factory function for instance
     def initialize(id, get_instance)
       @id = id
       @get_instance = lambda do

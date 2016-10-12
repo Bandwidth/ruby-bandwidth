@@ -1,6 +1,10 @@
 module Bandwidth
+  # LazyEnumerator will return data on demand
   class LazyEnumerator < Enumerator
 
+    # Initializer
+    # @param get_first_page [Proc] function which returns list of first page and http headers (as array)
+    # @param client [Client] optional client instance to make requests
     def initialize(get_first_page, client = nil)
       @client = client || Client.new()
       get_data = get_first_page
