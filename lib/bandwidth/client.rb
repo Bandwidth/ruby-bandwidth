@@ -81,12 +81,13 @@ module Bandwidth
     def make_request(method, path, data = {})
       d  = camelcase(data)
       connection = @create_connection.call()
+      path = @build_path.call(path) unless path.start_with?('http:', 'https:')
       response =  if method == :get || method == :delete
-                    connection.run_request(method, @build_path.call(path), nil, nil) do |req|
+                    connection.run_request(method, path, nil, nil) do |req|
                       req.params = d unless d == nil || d.empty?
                     end
                   else
-                    connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
+                    connection.run_request(method, path, d.to_json(), {'Content-Type' => 'application/json'})
                   end
       check_response(response)
       r = if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end
