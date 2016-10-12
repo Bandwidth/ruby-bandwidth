@@ -17,11 +17,12 @@ module Bandwidth
     # Get a list of the transactions made to your account
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] optional query hash
-    # @return [Array] list of transactions
+    # @return [Enumerator] list of transactions
     # @example
     #   transactions = Account.get_transactions(client)
     def self.get_transactions(client, query={})
-      client.make_request(:get, client.concat_user_path(ACCOUNT_PATH + "/transactions"), query)[0]
+      get_data = lambda { client.make_request(:get, client.concat_user_path(ACCOUNT_PATH + "/transactions"), query) }
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :get_transactions
   end
