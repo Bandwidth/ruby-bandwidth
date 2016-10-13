@@ -80,6 +80,7 @@ module Bandwidth
     end
 
     # Delete an endpoint
+    # @param endpoint_id [String] id of endpoint
     # @example
     #   domain.delete_endpoint("id")
     def delete_endpoint(endpoint_id)
@@ -89,5 +90,16 @@ module Bandwidth
     end
 
     alias_method :destroy_endpoint, :delete_endpoint
+
+    # Update an endpoint
+    # @param endpoint_id [String] id of endpoint
+    # @param data [Hash] changed data
+    # @example
+    #   domain.update_endpoint("id", {:enabled => true})
+    def update_endpoint(endpoint_id, data)
+      endpoint = EndPoint.new({:id => endpoint_id}, @client)
+      endpoint.domain_id = id
+      endpoint.update(data)
+    end
   end
 end
