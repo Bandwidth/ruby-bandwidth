@@ -7,7 +7,7 @@ module Bandwidth
 
     # Get created domains
     # @param client [Client] optional client instance to make requests
-    # @return [Array] list of domains
+    # @return [LazyEnumerator] list of domains
     # @example
     #   domains = Domain.list(client)
     def self.list(client)

@@ -18,7 +18,7 @@ module Bandwidth
     # Gets all the user errors for a user
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] query options
-    # @return [Array] list of errors
+    # @return [LazyEnumerator] list of errors
     # @example
     #   errors = Error.list(client)
     def self.list(client, query = nil)

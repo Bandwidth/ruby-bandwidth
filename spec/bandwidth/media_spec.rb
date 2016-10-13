@@ -11,7 +11,7 @@ describe Bandwidth::Media do
   describe '#list' do
     it 'should return list of files' do
       client.stubs.get('/v1/users/userId/media') {|env| [200, {}, '[{"mediaName":"file1","content":"url1","contentLength":100}]']}
-      expect(Media.list(client)).to eql([{:media_name => 'file1', :content => 'url1', :content_length => 100}])
+      expect(Media.list(client).to_a).to eql([{:media_name => 'file1', :content => 'url1', :content_length => 100}])
     end
   end
 

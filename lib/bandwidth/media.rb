@@ -8,11 +8,14 @@ module Bandwidth
     # Get a list of your media files
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] query options
-    # @return [Array] array with file information
+    # @return [LazyEnumerator] array with file information
     # @example
     #   files = Media.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(MEDIA_PATH), query)[0]
+      get_data = lambda do
+        client.make_request(:get, client.concat_user_path(MEDIA_PATH), query)
+      end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
