@@ -38,7 +38,7 @@ module Bandwidth
     # Create an application
     # @param client [Client] optional client instance to make requests
     # @param data [Hash] hash of values to create application
-    # @return [Application] created application
+    # @return [LazyInstance] created application
     # @example
     #   app = Application.create(client, :name => "new app")
     def self.create(client, data)

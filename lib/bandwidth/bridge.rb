@@ -39,7 +39,7 @@ module Bandwidth
     # Create a bridge
     # @param client [Client] optional client instance to make requests
     # @param data  [Hash] data to create a bridge
-    # @return [Bridge] created bridge
+    # @return [LazyInstance] created bridge
     # @example
     #   bridge = Bridge.create(client, {:call_ids => ["id1", "id2"]})
     def self.create(client, data)
