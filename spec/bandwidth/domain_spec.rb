@@ -36,7 +36,6 @@ describe Bandwidth::Domain do
   describe '#create_endpoint' do
     it 'should create a endpoint' do
       client.stubs.post('/v1/users/userId/domains/1/endpoints', '{"name":"point1"}') {|env| [200, {'Location' => '/v1/users/userId/domains/1/endpoints/10'}, '']}
-      client.stubs.get('/v1/users/userId/domains/1/endpoints/10') {|env| [200, {}, '{"id": "10"}']}
       item = Domain.new({:id=>'1'}, client)
       expect(item.create_endpoint(:name=> 'point1').id).to eql('10')
     end

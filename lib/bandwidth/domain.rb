@@ -11,9 +11,14 @@ module Bandwidth
     # @example
     #   domains = Domain.list(client)
     def self.list(client)
-      client.make_request(:get, client.concat_user_path(DOMAIN_PATH))[0].map do |item|
-        Domain.new(item, client)
+      get_data = lambda do
+        items, headers = client.make_request(:get, client.concat_user_path(DOMAIN_PATH))
+        items = items.map do |item|
+          Domain.new(item, client)
+        end
+        [items, headers]
       end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
@@ -47,7 +52,7 @@ module Bandwidth
     def create_endpoint(data)
       headers = @client.make_request(:post, @client.concat_user_path("#{DOMAIN_PATH}/#{id}/endpoints"), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      get_endpoint(id)
+      LazyInstance.new(id, lambda { get_endpoint(id) })
     end
 
     # Retrieve information about an endpoint
