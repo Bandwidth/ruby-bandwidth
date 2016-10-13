@@ -22,7 +22,10 @@ module Bandwidth
     # @example
     #   errors = Error.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(ERROR_PATH), query)[0]
+      get_data = lambda do
+        client.make_request(:get, client.concat_user_path(ERROR_PATH), query)
+      end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
   end
