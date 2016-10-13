@@ -14,11 +14,7 @@ describe Bandwidth::Application do
       expect(Application.get(client, '1').to_data()).to eql({:id=>'1', :name=>'app1', :incoming_call_url=>'http://host1'})
     end
     it 'should raise MissingCredentialsError if auth data is missing' do
-      begin
-        expect(Application.get(Client.new('', '', ''), '1').to_data()).to eql({:id=>'1', :name=>'app1', :incoming_call_url=>'http://host1'})
-        raise "An error is estimated"
-      rescue Errors::MissingCredentialsError
-      end
+      expect{Application.get(Client.new('', '', ''), '1')}.to raise_error(Errors::MissingCredentialsError)
     end
   end
 
