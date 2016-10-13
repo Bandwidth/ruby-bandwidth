@@ -71,7 +71,6 @@ module Bandwidth
     #   Media.get_info(client, "file.pdf")
     def self.get_info(client, name)
       headers = client.make_request(:head, client.concat_user_path("#{MEDIA_PATH}/#{URI.encode(name)}"))[1]
-      puts headers
       {:content_type => headers[:content_type], :content_length => headers[:content_length]}
     end
     wrap_client_arg :get_info
