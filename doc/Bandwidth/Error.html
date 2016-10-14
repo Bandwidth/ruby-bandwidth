@@ -160,7 +160,7 @@ happened in your API calls and during applications callbacks.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(client, query = nil)  &#x21d2; Array </a>
+      <a href="#list-class_method" title="list (class method)">.<strong>list</strong>(client, query = nil)  &#x21d2; LazyEnumerator </a>
     
 
     
@@ -307,7 +307,7 @@ happened in your API calls and during applications callbacks.</p>
       <div class="method_details ">
   <h3 class="signature " id="list-class_method">
   
-    .<strong>list</strong>(client, query = nil)  &#x21d2; <tt>Array</tt> 
+    .<strong>list</strong>(client, query = nil)  &#x21d2; <tt><span class='object_link'><a href="LazyEnumerator.html" title="Bandwidth::LazyEnumerator (class)">LazyEnumerator</a></span></tt> 
   
 
   
@@ -375,7 +375,7 @@ happened in your API calls and during applications callbacks.</p>
     <li>
       
       
-        <span class='type'>(<tt>Array</tt>)</span>
+        <span class='type'>(<tt><span class='object_link'><a href="LazyEnumerator.html" title="Bandwidth::LazyEnumerator (class)">LazyEnumerator</a></span></tt>)</span>
       
       
       
@@ -396,13 +396,19 @@ happened in your API calls and during applications callbacks.</p>
 
 24
 25
-26</pre>
+26
+27
+28
+29</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/bandwidth/error.rb', line 24</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_list'>list</span><span class='lparen'>(</span><span class='id identifier rubyid_client'>client</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_make_request'>make_request</span><span class='lparen'>(</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_concat_user_path'>concat_user_path</span><span class='lparen'>(</span><span class='const'>ERROR_PATH</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_get_data'>get_data</span> <span class='op'>=</span> <span class='id identifier rubyid_lambda'>lambda</span> <span class='kw'>do</span>
+    <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_make_request'>make_request</span><span class='lparen'>(</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_concat_user_path'>concat_user_path</span><span class='lparen'>(</span><span class='const'>ERROR_PATH</span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+  <span class='kw'>end</span>
+  <span class='const'>LazyEnumerator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_get_data'>get_data</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -414,7 +420,7 @@ happened in your API calls and during applications callbacks.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Oct 10 12:55:38 2016 by
+  Generated on Wed Oct 12 17:26:26 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.1).
 </div>

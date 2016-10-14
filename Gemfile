@@ -10,6 +10,7 @@ end
 
 group :development do
   gem 'yard-ghpages'
+  gem 'byebug'
 end
 
 gemspec

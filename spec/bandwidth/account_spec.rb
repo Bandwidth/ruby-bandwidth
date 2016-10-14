@@ -26,15 +26,15 @@ describe Bandwidth::Account do
     it 'should return transaction data' do
       client.stubs.get('/v1/users/userId/account/transactions') {|env| [200, {}, '[{"id":1,"amount":30,"type":"charge"},{"id":2,"amount":20,"type":"payment"}]']}
       client.stubs.get('/v1/users/userId/account/transactions?test=true') {|env| [200, {}, '[{"id":10,"amount":30,"type":"charge"},{"id":20,"amount":20,"type":"payment"}]']}
-      expect(Account.get_transactions(client)).to eql([{:id=>1, :amount=>30, :type=>'charge'}, {:id=>2, :amount=>20, :type=>'payment'}])
-      expect(Account.get_transactions(client, {:test=>true})).to eql([{:id=>10, :amount=>30, :type=>'charge'}, {:id=>20, :amount=>20, :type=>'payment'}])
+      expect(Account.get_transactions(client).to_a).to eql([{:id=>1, :amount=>30, :type=>'charge'}, {:id=>2, :amount=>20, :type=>'payment'}])
+      expect(Account.get_transactions(client, {:test=>true}).to_a).to eql([{:id=>10, :amount=>30, :type=>'charge'}, {:id=>20, :amount=>20, :type=>'payment'}])
     end
 
     it 'should return transaction data (with default client)' do
       Helper.stubs.get('/v1/users/userId/account/transactions') {|env| [200, {}, '[{"id":1,"amount":30,"type":"charge"},{"id":2,"amount":20,"type":"payment"}]']}
       Helper.stubs.get('/v1/users/userId/account/transactions?test=true') {|env| [200, {}, '[{"id":10,"amount":30,"type":"charge"},{"id":20,"amount":20,"type":"payment"}]']}
-      expect(Account.get_transactions()).to eql([{:id=>1, :amount=>30, :type=>'charge'}, {:id=>2, :amount=>20, :type=>'payment'}])
-      expect(Account.get_transactions({:test=>true})).to eql([{:id=>10, :amount=>30, :type=>'charge'}, {:id=>20, :amount=>20, :type=>'payment'}])
+      expect(Account.get_transactions().to_a).to eql([{:id=>1, :amount=>30, :type=>'charge'}, {:id=>2, :amount=>20, :type=>'payment'}])
+      expect(Account.get_transactions({:test=>true}).to_a).to eql([{:id=>10, :amount=>30, :type=>'charge'}, {:id=>20, :amount=>20, :type=>'payment'}])
     end
   end
 end

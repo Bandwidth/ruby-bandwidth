@@ -42,4 +42,52 @@ describe Bandwidth::AvailableNumber do
       expect(AvailableNumber.search_local(client, {:criteria=>'criteria'})).to eql(items)
     end
   end
+
+  ordered_items = [
+    {
+      :number => "{number1}",
+      :national_number => "{national_number1}",
+      :price => "2.00",
+      :location => "https://.../v1/users/.../phoneNumbers/numberId1"
+    },
+    {
+      :number => "{number2}",
+      :national_number => "{national_number2}",
+      :price => "3.00",
+      :location => "https://.../v1/users/.../phoneNumbers/numberId2"
+    }
+  ]
+
+  expected_ordered_items = [
+    {
+      :number => '{number1}',
+      :national_number => '{national_number1}',
+      :price => '2.00',
+      :location => 'https://.../v1/users/.../phoneNumbers/numberId1',
+      :id => 'numberId1',
+    },
+    {
+      :number => '{number2}',
+      :national_number => '{national_number2}',
+      :price => '3.00',
+      :location => 'https://.../v1/users/.../phoneNumbers/numberId2',
+      :id => 'numberId2'
+    }
+  ]
+
+  ordered_json = Helper.camelcase(ordered_items).to_json()
+
+  describe '#search_and_order_toll_free' do
+    it 'should return ordered numbers' do
+      client.stubs.post('/v1/availableNumbers/tollFree?criteria=criteria') {|env| [200, {}, ordered_json]}
+      expect(AvailableNumber.search_and_order_toll_free(client, {:criteria=>'criteria'})).to eql(expected_ordered_items)
+    end
+  end
+
+  describe '#search_and_order_local' do
+    it 'should return ordered numbers' do
+      client.stubs.post('/v1/availableNumbers/local?criteria=criteria') {|env| [200, {}, ordered_json]}
+      expect(AvailableNumber.search_and_order_local(client, {:criteria=>'criteria'})).to eql(expected_ordered_items)
+    end
+  end
 end

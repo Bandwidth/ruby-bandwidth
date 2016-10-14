@@ -25,22 +25,27 @@ module Bandwidth
     # @example
     #   list = Bridge.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(BRIDGE_PATH), query)[0].map do |item|
-        Bridge.new(item, client)
+      get_data = lambda do
+        items, headers = client.make_request(:get, client.concat_user_path(BRIDGE_PATH), query)
+        items = items.map do |item|
+          Bridge.new(item, client)
+        end
+        [items, headers]
       end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
     # Create a bridge
     # @param client [Client] optional client instance to make requests
     # @param data  [Hash] data to create a bridge
-    # @return [Bridge] created bridge
+    # @return [LazyInstance] created bridge
     # @example
     #   bridge = Bridge.create(client, {:call_ids => ["id1", "id2"]})
     def self.create(client, data)
       headers = client.make_request(:post, client.concat_user_path(BRIDGE_PATH), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      self.get(client, id)
+      LazyInstance.new(id, lambda { self.get(client, id) })
     end
     wrap_client_arg :create
 

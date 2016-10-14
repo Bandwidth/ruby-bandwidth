@@ -21,24 +21,29 @@ module Bandwidth
     # List a user's call recordings
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] query options
-    # @return [Array] list of recordings
+    # @return [LazyEnumerator] list of recordings
     # @example
     #   recordings = Recording.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(RECORDING_PATH), query)[0].map do |item|
-        Recording.new(item, client)
+      get_data = lambda do
+        items, headers = client.make_request(:get, client.concat_user_path(RECORDING_PATH), query)
+        items = items.map do |item|
+          Recording.new(item, client)
+        end
+        [items, headers]
       end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
     # Request the transcription process to be started for the given recording id.
-    # @return [Hash] created transcription
+    # @return [LazyInstance] created transcription
     # @example
     #   transcription = recording.create_transcription()
     def create_transcription()
       headers = @client.make_request(:post, @client.concat_user_path("#{RECORDING_PATH}/#{id}/transcriptions"), {})[1]
       id = Client.get_id_from_location_header(headers[:location])
-      get_transcription(id)
+      LazyInstance.new(id, lambda { get_transcription(id) })
     end
 
     # Gets information about a transcription
