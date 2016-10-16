@@ -9,11 +9,20 @@ describe Bandwidth::EndPoint do
   end
 
   describe '#delete' do
-    it 'should remove a endpoint' do
+    it 'should remove an endpoint' do
       client.stubs.delete('/v1/users/userId/domains/1/endpoints/10') {|env| [200, {}, '']}
       item = EndPoint.new({:id=>'10'}, client)
       item.domain_id = '1'
       item.delete()
+    end
+  end
+
+  describe '#update' do
+    it 'should change an endpoint' do
+      client.stubs.post('/v1/users/userId/domains/1/endpoints/10', '{"enabled":true}') {|env| [200, {}, '']}
+      item = EndPoint.new({:id=>'10'}, client)
+      item.domain_id = '1'
+      item.update({:enabled=>true})
     end
   end
 

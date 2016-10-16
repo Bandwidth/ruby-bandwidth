@@ -22,8 +22,8 @@ describe Bandwidth::Client do
       expect(Client.get_id_from_location_header('http://localhost/path1/path2/id')).to eql('id')
     end
     it 'should raise error if location is missing or nil' do
-      expect{Client.get_id_from_location_header('')}.to raise_error
-      expect{Client.get_id_from_location_header(nil)}.to raise_error
+      expect{Client.get_id_from_location_header('')}.to raise_error(StandardError)
+      expect{Client.get_id_from_location_header(nil)}.to raise_error(StandardError)
     end
   end
 

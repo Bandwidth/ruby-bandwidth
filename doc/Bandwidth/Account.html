@@ -160,7 +160,7 @@ account type and all elements related to your platform account.</p>
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#get_transactions-class_method" title="get_transactions (class method)">.<strong>get_transactions</strong>(client, query = {})  &#x21d2; Array </a>
+      <a href="#get_transactions-class_method" title="get_transactions (class method)">.<strong>get_transactions</strong>(client, query = {})  &#x21d2; Enumerator </a>
     
 
     
@@ -291,7 +291,7 @@ account type and all elements related to your platform account.</p>
       <div class="method_details ">
   <h3 class="signature " id="get_transactions-class_method">
   
-    .<strong>get_transactions</strong>(client, query = {})  &#x21d2; <tt>Array</tt> 
+    .<strong>get_transactions</strong>(client, query = {})  &#x21d2; <tt>Enumerator</tt> 
   
 
   
@@ -359,7 +359,7 @@ account type and all elements related to your platform account.</p>
     <li>
       
       
-        <span class='type'>(<tt>Array</tt>)</span>
+        <span class='type'>(<tt>Enumerator</tt>)</span>
       
       
       
@@ -380,13 +380,15 @@ account type and all elements related to your platform account.</p>
 
 23
 24
-25</pre>
+25
+26</pre>
     </td>
     <td>
       <pre class="code"><span class="info file"># File 'lib/bandwidth/account.rb', line 23</span>
 
 <span class='kw'>def</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_get_transactions'>get_transactions</span><span class='lparen'>(</span><span class='id identifier rubyid_client'>client</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='op'>=</span><span class='lbrace'>{</span><span class='rbrace'>}</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_make_request'>make_request</span><span class='lparen'>(</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_concat_user_path'>concat_user_path</span><span class='lparen'>(</span><span class='const'>ACCOUNT_PATH</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/transactions</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span><span class='lbracket'>[</span><span class='int'>0</span><span class='rbracket'>]</span>
+  <span class='id identifier rubyid_get_data'>get_data</span> <span class='op'>=</span> <span class='id identifier rubyid_lambda'>lambda</span> <span class='lbrace'>{</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_make_request'>make_request</span><span class='lparen'>(</span><span class='symbol'>:get</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='period'>.</span><span class='id identifier rubyid_concat_user_path'>concat_user_path</span><span class='lparen'>(</span><span class='const'>ACCOUNT_PATH</span> <span class='op'>+</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>/transactions</span><span class='tstring_end'>&quot;</span></span><span class='rparen'>)</span><span class='comma'>,</span> <span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span> <span class='rbrace'>}</span>
+  <span class='const'>LazyEnumerator</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_get_data'>get_data</span><span class='comma'>,</span> <span class='id identifier rubyid_client'>client</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -398,7 +400,7 @@ account type and all elements related to your platform account.</p>
 </div>
 
       <div id="footer">
-  Generated on Mon Oct 10 12:55:39 2016 by
+  Generated on Wed Oct 12 17:26:27 2016 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.9.5 (ruby-2.3.1).
 </div>

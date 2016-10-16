@@ -20,7 +20,7 @@ describe Bandwidth::Error do
   describe '#list' do
     it 'should return all  errors' do
       client.stubs.get('/v1/users/userId/errors?page=2') {|env| [200, {}, "[#{template_json}]"]}
-      expect(Error.list(client, :page => 2)).to eql([template_item])
+      expect(Error.list(client, :page => 2).to_a).to eql([template_item])
     end
   end
 end

@@ -13,6 +13,15 @@ module Bandwidth
 
     alias_method :destroy, :delete
 
+    # Update an endpoint
+    # @param data [Hash] changed data
+    # @example
+    #   endpoint.update({:enabled => false})
+    def update(data)
+      @client.make_request(:post, @client.concat_user_path("#{DOMAIN_PATH}/#{domain_id}/endpoints/#{id}"), data)[0]
+    end
+
+
 
     # Create auth token.
     # @example

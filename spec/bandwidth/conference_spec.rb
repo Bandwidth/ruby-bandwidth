@@ -61,7 +61,6 @@ describe Bandwidth::Conference do
   describe '#create_member' do
     it 'should create a member' do
       client.stubs.post('/v1/users/userId/conferences/1/members', '{"from":"from"}') {|env| [200, {'Location' => '/v1/users/userId/conferences/1/members/10'}, '']}
-      client.stubs.get('/v1/users/userId/conferences/1/members/10') {|env| [200, {}, '{"id": "10"}']}
       item = Conference.new({:id=>'1'}, client)
       expect(item.create_member(:from => 'from').id).to eql('10')
     end

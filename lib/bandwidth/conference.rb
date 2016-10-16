@@ -21,13 +21,13 @@ module Bandwidth
     # Create a conference.
     # @param client [Client] optional client instance to make requests
     # @param data [Hash] data to create a conference
-    # @return [Conference] created conference
+    # @return [LazyInstance] created conference
     # @example
     #   conference = Conference.create(client, :from => "number")
     def self.create(client, data)
       headers = client.make_request(:post, client.concat_user_path(CONFERENCE_PATH), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      self.get(client, id)
+      LazyInstance.new(id, lambda { self.get(client, id) })
     end
     wrap_client_arg :create
 
@@ -59,13 +59,13 @@ module Bandwidth
 
     # Add a member to a conference.
     # @param data [Hash] data to add member to a conference
-    # @return [ConferenceMember] created member
+    # @return [LazyInstance] created member
     # @example
     #   member = conference.create_member(:call_id=>"id")
     def create_member(data)
       headers = @client.make_request(:post, @client.concat_user_path("#{CONFERENCE_PATH}/#{id}/members"), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      get_member(id)
+      LazyInstance.new(id, lambda { get_member(id) })
     end
 
     # Retrieve information about a particular conference member

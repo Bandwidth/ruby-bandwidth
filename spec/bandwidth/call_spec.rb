@@ -60,14 +60,12 @@ describe Bandwidth::Call do
     json =  '{"tag":"1","maxDigits":1,"prompt":{"locale":"en_US","gender":"female","sentence":"test","voice":"kate","bargeable":true}}'
     it 'should create a gather' do
       client.stubs.post('/v1/users/userId/calls/1/gather', json) {|env| [200, {'Location' => '/v1/users/userId/calls/1/gather/10'}, '']}
-      client.stubs.get('/v1/users/userId/calls/1/gather/10') {|env| [200, {}, '{"id": "10"}']}
       item = Call.new({:id=>'1'}, client)
       data = {:tag => "1", :maxDigits => 1, :prompt => {:locale => "en_US", :gender => "female", :sentence => "test", :voice => "kate", :bargeable => true}}
       expect(item.create_gather(data)[:id]).to eql('10')
     end
-    it 'should create a gather by sentence sting only' do
+    it 'should create a gather by sentence string only' do
       client.stubs.post('/v1/users/userId/calls/1/gather', json) {|env| [200, {'Location' => '/v1/users/userId/calls/1/gather/10'}, '']}
-      client.stubs.get('/v1/users/userId/calls/1/gather/10') {|env| [200, {}, '{"id": "10"}']}
       item = Call.new({:id=>'1'}, client)
       expect(item.create_gather('test')[:id]).to eql('10')
     end
@@ -116,50 +114,40 @@ describe Bandwidth::Call do
   describe '#hangup' do
     it 'should hang up a call' do
       client.stubs.post('/v1/users/userId/calls/1', '{"state":"completed"}') {|env| [200, {}, '']}
-      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, '{"state": "completed"}']}
       item = Call.new({:id=>'1', :state=>'active'}, client)
       item.hangup()
-      expect(item.state).to eql('completed')
     end
   end
 
   describe '#answer_on_incoming' do
     it 'should answer on an incoming call' do
       client.stubs.post('/v1/users/userId/calls/1', '{"state":"active"}') {|env| [200, {}, '']}
-      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, '{"state": "active"}']}
       item = Call.new({:id=>'1', :state=>'active'}, client)
       item.answer_on_incoming()
-      expect(item.state).to eql('active')
     end
   end
 
   describe '#reject_incoming' do
     it 'should reject  an incoming call' do
       client.stubs.post('/v1/users/userId/calls/1', '{"state":"rejected"}') {|env| [200, {}, '']}
-      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, '{"state": "rejected"}']}
       item = Call.new({:id=>'1', :state=>'active'}, client)
       item.reject_incoming()
-      expect(item.state).to eql('rejected')
     end
   end
 
   describe '#recording_on' do
     it 'should tune on recording of a call' do
       client.stubs.post('/v1/users/userId/calls/1', '{"recordingEnabled":true}') {|env| [200, {}, '']}
-      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, '{"recordingEnabled":true}']}
       item = Call.new({:id=>'1', :recording_enabled=>false}, client)
       item.recording_on()
-      expect(item.recording_enabled).to eql(true)
     end
   end
 
   describe '#recording_off' do
     it 'should tune off recording of a call' do
       client.stubs.post('/v1/users/userId/calls/1', '{"recordingEnabled":false}') {|env| [200, {}, '']}
-      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, '{"recordingEnabled":false}']}
       item = Call.new({:id=>'1', :recording_enabled=>true}, client)
       item.recording_off()
-      expect(item.recording_enabled).to eql(false)
     end
   end
 end

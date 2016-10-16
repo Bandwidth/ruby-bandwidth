@@ -22,26 +22,31 @@ module Bandwidth
     # Get a list of previous calls that were made or received
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] query options
-    # @return [Array] array of Call ionstances
+    # @return [Enumerator] array of Call ionstances
     # @example
     #   calls = Call.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(CALL_PATH), query)[0].map do |item|
-        Call.new(item, client)
+      get_data = lambda do
+        items, headers = client.make_request(:get, client.concat_user_path(CALL_PATH), query)
+        items = items.map do |item|
+          Call.new(item, client)
+        end
+        [items, headers]
       end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
     # Make a phone call
     # @param client [Client] optional client instance to make requests
     # @param data [Hash] data to create a call
-    # @return [Call] created call
+    # @return [LazyInstance] created call
     # @example
     #   call = Call.create(client, {:from=>"from", :to=>"to"})
     def self.create(client, data)
       headers = client.make_request(:post, client.concat_user_path(CALL_PATH), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      self.get(client, id)
+      LazyInstance.new(id, lambda { self.get(client, id) })
     end
     wrap_client_arg :create
 
@@ -71,7 +76,7 @@ module Bandwidth
 
     # Gather the DTMF digits pressed
     # @param data [String|Hash] sentence to speak on creating cather if string, otherwise it is hash with gather options
-    # @return [Hash] created gather
+    # @return [LazyInstance] created gather
     # @example
     #   gather = call.create_gather("Press a digit")
     #   gather = call.create_gather(:max_digits => 1, :prompt => {:sentence => "Press a digit",  :bargeable => true })
@@ -86,7 +91,7 @@ module Bandwidth
           end
       headers = @client.make_request(:post, @client.concat_user_path("#{CALL_PATH}/#{id}/gather"), d)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      get_gather(id)
+      LazyInstance.new(id, lambda { get_gather(id) })
     end
 
     # Update the gather DTMF (Stop Gather)
@@ -135,37 +140,27 @@ module Bandwidth
     # Hangup a call
     def hangup()
       update({:state => 'completed'})
-      reload()
     end
 
     # Answer on an incoming call
     def answer_on_incoming()
       update({:state => 'active'})
-      reload()
     end
 
     # Reject a call
     def reject_incoming()
       update({:state => 'rejected'})
-      reload()
     end
 
     # Tune on recording of a call
     def recording_on()
       update({:recording_enabled => true})
-      reload()
     end
 
     # Tune off recording of a call
     def recording_off()
       update({:recording_enabled => false})
-      reload()
     end
 
-    protected
-
-    def reload()
-      @data.merge!(@client.make_request(:get, @client.concat_user_path("#{CALL_PATH}/#{id}"))[0])
-    end
   end
 end

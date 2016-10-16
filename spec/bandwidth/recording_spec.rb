@@ -28,7 +28,6 @@ describe Bandwidth::Recording do
     it 'should create a transcription' do
       client.stubs.post('/v1/users/userId/recordings/1/transcriptions') {|env|
         [200, {'Location' => '/v1/users/userId/recordings/1/transcriptions/10'}, '']}
-      client.stubs.get('/v1/users/userId/recordings/1/transcriptions/10') {|env| [200, {}, '{"id": "10"}']}
       item = Recording.new({:id=>'1'}, client)
       expect(item.create_transcription()[:id]).to eql('10')
     end

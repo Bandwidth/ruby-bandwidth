@@ -7,13 +7,18 @@ module Bandwidth
 
     # Get created domains
     # @param client [Client] optional client instance to make requests
-    # @return [Array] list of domains
+    # @return [LazyEnumerator] list of domains
     # @example
     #   domains = Domain.list(client)
     def self.list(client)
-      client.make_request(:get, client.concat_user_path(DOMAIN_PATH))[0].map do |item|
-        Domain.new(item, client)
+      get_data = lambda do
+        items, headers = client.make_request(:get, client.concat_user_path(DOMAIN_PATH))
+        items = items.map do |item|
+          Domain.new(item, client)
+        end
+        [items, headers]
       end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
@@ -47,7 +52,7 @@ module Bandwidth
     def create_endpoint(data)
       headers = @client.make_request(:post, @client.concat_user_path("#{DOMAIN_PATH}/#{id}/endpoints"), data)[1]
       id = Client.get_id_from_location_header(headers[:location])
-      get_endpoint(id)
+      LazyInstance.new(id, lambda { get_endpoint(id) })
     end
 
     # Retrieve information about an endpoint
@@ -75,6 +80,7 @@ module Bandwidth
     end
 
     # Delete an endpoint
+    # @param endpoint_id [String] id of endpoint
     # @example
     #   domain.delete_endpoint("id")
     def delete_endpoint(endpoint_id)
@@ -84,5 +90,16 @@ module Bandwidth
     end
 
     alias_method :destroy_endpoint, :delete_endpoint
+
+    # Update an endpoint
+    # @param endpoint_id [String] id of endpoint
+    # @param data [Hash] changed data
+    # @example
+    #   domain.update_endpoint("id", {:enabled => true})
+    def update_endpoint(endpoint_id, data)
+      endpoint = EndPoint.new({:id => endpoint_id}, @client)
+      endpoint.domain_id = id
+      endpoint.update(data)
+    end
   end
 end

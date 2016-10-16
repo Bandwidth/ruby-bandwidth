@@ -22,7 +22,10 @@ module Bandwidth
     # @example
     #   messages = Message.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(MESSAGE_PATH), query)[0]
+      get_data = lambda do
+        client.make_request(:get, client.concat_user_path(MESSAGE_PATH), query)
+      end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
 
@@ -41,13 +44,14 @@ module Bandwidth
             {:error => StandardError.new(i[:error][:message])}
           else
             items = (i[:location] || '').split('/')
-            if items.size < 2 then  {:error =>  StandardError.new('Missing id in the location header')} else {:id => items.last} end
+            id = items.last
+            if items.size < 2 then  {:error =>  StandardError.new('Missing id in the location header')} else LazyInstance.new(id, lambda { self.get(client, id) }) end
           end
         end
       else
         headers = res[1]
         id = Client.get_id_from_location_header(headers[:location])
-        self.get(client, id)
+        LazyInstance.new(id, lambda { self.get(client, id) })
       end
     end
     wrap_client_arg :create

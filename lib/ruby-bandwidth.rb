@@ -1,3 +1,6 @@
+require 'bandwidth/lazy_instance'
+require 'bandwidth/lazy_enumerator'
+
 require 'bandwidth/errors'
 require 'bandwidth/client'
 require 'bandwidth/client_wrapper'

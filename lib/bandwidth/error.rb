@@ -18,11 +18,14 @@ module Bandwidth
     # Gets all the user errors for a user
     # @param client [Client] optional client instance to make requests
     # @param query [Hash] query options
-    # @return [Array] list of errors
+    # @return [LazyEnumerator] list of errors
     # @example
     #   errors = Error.list(client)
     def self.list(client, query = nil)
-      client.make_request(:get, client.concat_user_path(ERROR_PATH), query)[0]
+      get_data = lambda do
+        client.make_request(:get, client.concat_user_path(ERROR_PATH), query)
+      end
+      LazyEnumerator.new(get_data, client)
     end
     wrap_client_arg :list
   end
