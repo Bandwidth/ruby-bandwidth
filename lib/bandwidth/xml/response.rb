@@ -2,32 +2,14 @@ require 'builder'
 
 module Bandwidth
   module Xml
-    # Root class for Bandwidth XML
     class Response
-      # Initializer
-      # @param verbs [Array] optional list of verbs to include into response
-      def initialize(verbs = nil)
-        @verbs = verbs || []
-      end
+      attr_reader :text
+      alias_method :to_xml , :text
 
-      # Return XML presentaion of this response
-      def to_xml()
-        xml = Builder::XmlMarkup.new()
-        xml.instruct!(:xml, :version=>'1.0', :encoding=>'UTF-8')
-        xml.Response do
-          @verbs.each {|verb| verb.to_xml(xml)}
-        end
-        xml.target!()
-      end
-
-      # Add one or more verbs to this response
-      def push(*verbs)
-        @verbs.push(*verbs)
-      end
-
-      # Add a verb to this response
-      def <<(verb)
-        @verbs << verb
+      def initialize(&block)
+        xml = Builder::XmlMarkup.new
+        xml.instruct!
+        @text = xml.Response &block
       end
     end
   end
