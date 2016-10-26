@@ -129,6 +129,14 @@ module Bandwidth
       @client.make_request(:get, @client.concat_user_path("#{CALL_PATH}/#{id}/events"))[0]
     end
 
+    # Retrieve all transcriptions related to the call
+    # @return [Array] list of transcriptions
+    # @example
+    #   transcriptions = call.get_transcriptions()
+    def get_transcriptions()
+      @client.make_request(:get, @client.concat_user_path("#{CALL_PATH}/#{id}/transcriptions"))[0]
+    end
+
     # Retrieve all recordings related to the call
     # @return [Array] list of recordings
     # @example
