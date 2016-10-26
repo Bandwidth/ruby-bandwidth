@@ -103,11 +103,19 @@ describe Bandwidth::Call do
     end
   end
 
-  describe '#get_recording' do
+  describe '#get_recordings' do
     it 'should return recordings of a call' do
       client.stubs.get('/v1/users/userId/calls/1/recordings') {|env| [200, {}, '[{"id": "10"},{"id": "11"}]']}
       item = Call.new({:id=>'1'}, client)
       expect(item.get_recordings().map {|i| i[:id]}).to eql(['10', '11'])
+    end
+  end
+
+  describe '#get_transcriptions' do
+    it 'should return transcriptions of a call' do
+      client.stubs.get('/v1/users/userId/calls/1/transcriptions') {|env| [200, {}, '[{"id": "20"},{"id": "21"}]']}
+      item = Call.new({:id=>'1'}, client)
+      expect(item.get_transcriptions().map {|i| i[:id]}).to eql(['20', '21'])
     end
   end
 
