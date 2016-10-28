@@ -66,8 +66,8 @@ module Bandwidth
     # @return [Array] array of EndPoint instances
     # @example
     #   endpoints = domain.get_endpoints()
-    def get_endpoints()
-      @client.make_request(:get, @client.concat_user_path("#{DOMAIN_PATH}/#{id}/endpoints"))[0].map do |i|
+    def get_endpoints(query = nil)
+      @client.make_request(:get, @client.concat_user_path("#{DOMAIN_PATH}/#{id}/endpoints"), query)[0].map do |i|
         endpoint = EndPoint.new(i, @client)
         endpoint.domain_id = id
         endpoint
