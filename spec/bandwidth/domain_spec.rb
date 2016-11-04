@@ -56,6 +56,12 @@ describe Bandwidth::Domain do
       item = Domain.new({:id=>'1'}, client)
       expect(item.get_endpoints().map {|i| i.id}).to eql(['10', '11'])
     end
+
+    it 'should pass along the query' do
+      client.stubs.get('/v1/users/userId/domains/1/endpoints?size=100') {|env| [200, {}, '[{"id": "100"},{"id": "110"}]']}
+      item = Domain.new({:id=>'1'}, client)
+      expect(item.get_endpoints(size: 100).map {|i| i.id}).to eql(['100', '110'])
+    end
   end
 
   describe '#delete_endpoint' do
