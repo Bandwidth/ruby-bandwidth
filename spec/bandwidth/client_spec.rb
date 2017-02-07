@@ -10,6 +10,19 @@ describe Bandwidth::Client do
     end
   end
 
+  describe '#initialize with block' do
+    it 'should create instance of Client' do
+      called = false
+      client = Client.new('userId', 'token', 'secret') do |faraday|
+        expect(faraday).to be_a(Faraday::Connection)
+        called = true
+      end
+      client.stubs.get('/v1/path1') { |env| [200, {}, '{}'] }
+      client.make_request(:get, '/path1')
+      expect(called).to be true
+    end
+  end
+
   describe '#global_options' do
     it 'should return and change @@global_options of Client' do
       Client.global_options = {:user_id => 'User', :api_token => 'token', :api_secret => 'api_secret'}

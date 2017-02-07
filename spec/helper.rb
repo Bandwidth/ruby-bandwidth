@@ -60,8 +60,11 @@ end
 
 class  Bandwidth::Client
   alias_method :old_initialize, :initialize
-  def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1')
-    old_initialize(user_id, api_token, api_secret, api_endpoint, api_version)
+  def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1', &configure)
+    @configure_faraday = configure
+    old_initialize(user_id, api_token, api_secret, api_endpoint, api_version) do |faraday|
+      @configure_faraday.call(faraday) if @configure_faraday
+    end
     @stubs = if user_id  then  Faraday::Adapter::Test::Stubs.new() else Helper.stubs end
     @set_adapter = lambda{|faraday| faraday.adapter(:test, @stubs)}
   end

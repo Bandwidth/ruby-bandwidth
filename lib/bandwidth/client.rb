@@ -13,12 +13,16 @@ module Bandwidth
     # @param api_secret [String] catapult API secret
     # @param api_endpoint [String] base url of Catapult API
     # @param api_version [String] version of Catapult API
+    # @param configure_connection [Proc] optional block to set additional options to network connection (Faraday connection object)
     #
     # @example
     #   client = Client.new("userId", "token", "secret")
     #   client = Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret") # with has of options
     #   client = Client.new() #options from Client.global_options will be used here
-    def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1')
+    #   client = Client.new("userId", "token", "secret"") do |connection|
+    #     connection.options.timeout = 6 # configure faraday connection here
+    #   end
+    def initialize (user_id = nil, api_token = nil, api_secret = nil, api_endpoint = 'https://api.catapult.inetwork.com', api_version = 'v1', &configure_connection)
       if api_token == nil && api_secret == nil
         if  user_id == nil
           user_id = @@global_options
@@ -42,6 +46,7 @@ module Bandwidth
           faraday.headers['Accept'] = 'application/json'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
           @set_adapter.call(faraday)
+          configure_connection.call(faraday) if configure_connection
         }
       }
       @api_endpoint = api_endpoint
