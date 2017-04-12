@@ -92,6 +92,8 @@ Send SMS
   #or
   client = Bandwidth::Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret")
   message = Bandwidth::Message.create(client, {:from => "+19195551212", :to => "+191955512142", :text => "Test"})
+  #or via api v2
+  message = Bandwidth::V2::Message.create({:from => "+19195551212", :to => ["+191955512142"], :text => "Test"})
 ```
 
 Send some SMSes
