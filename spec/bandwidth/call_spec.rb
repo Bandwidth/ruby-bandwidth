@@ -45,7 +45,7 @@ describe Bandwidth::Call do
       client.stubs.post('/v1/users/userId/calls/1', '{"state":"transfering"}') {|env| [201, {'Location' => '/v1/users/userId/calls/2'}, '']}
       item = Call.new({:id=>'1'}, client)
       id = item.update({:state=>'transfering'})
-      expect(id).to eql(2)
+      expect(id).to eql('2')
     end
   end
 
