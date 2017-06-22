@@ -50,7 +50,10 @@ module Bandwidth
     # @example
     #   call.update(:state=>"completed") #hangup a call
     def update(data)
-      @client.make_request(:post, @client.concat_user_path("#{CALL_PATH}/#{id}"), data)[0]
+      headers = @client.make_request(:post, @client.concat_user_path("#{CALL_PATH}/#{id}"), data)[1]
+      if headers[:location]
+         Client.get_id_from_location_header(headers[:location])
+      end
     end
 
     # Play an audio or speak a sentence in a call

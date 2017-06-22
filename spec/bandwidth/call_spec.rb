@@ -40,6 +40,15 @@ describe Bandwidth::Call do
     end
   end
 
+  describe '#update (with location header)' do
+    it 'should change item and return id' do
+      client.stubs.post('/v1/users/userId/calls/1', '{"state":"transfering"}') {|env| [201, {'Location' => '/v1/users/userId/calls/2'}, '']}
+      item = Call.new({:id=>'1'}, client)
+      id = item.update({:state=>'transfering'})
+      expect(id).to eql(2)
+    end
+  end
+
   describe '#play_audio' do
     it 'should play audio' do
       client.stubs.post('/v1/users/userId/calls/1/audio', '{"fileUrl":"http://host1"}') {|env| [200, {}, '']}
