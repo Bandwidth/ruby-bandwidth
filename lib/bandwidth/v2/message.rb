@@ -11,7 +11,7 @@ module Bandwidth
       # @param data [Hash] options of new message or list of messages
       # @return [Hash] created message or statuses of list of messages
       # @example
-      #   message = Message.create(client, {:from=>"from", :to=>["to"], :text=>"text"})
+      #   message = Message.create(client, {:from=>"from", :to=>["to"], :text=>"text", :application_id=>"messagingApplicationId"})
       def self.create(client, data)
         client.make_request(:post, client.concat_user_path(MESSAGE_PATH), data, 'v2')[0]
       end
@@ -29,14 +29,14 @@ module Bandwidth
       #     sms_options: {toll_free_enabled: true},
       #     mms_options: {enabled: true}
       #   })
-      def self.create_messaging_application(auth_data, data, &configure_connection)
+      def self.create_messaging_application(auth_data, data)
         app = {
-          :application_id => self.create_application(auth_data, data, configure_connection),
-          :location_id => self.create_location(auth_data, data, configure_connection)
+          :application_id => self.create_application(auth_data, data),
+          :location_id => self.create_location(auth_data, data)
         }
-        self.enable_sms(auth_data, data[:sms_options], app, configure_connection)
-        self.enable_mms(auth_data, data[:mms_options], app, configure_connection)
-        self.assign_application_to_location(auth_data, app, configure_connection)
+        self.enable_sms(auth_data, data[:sms_options], app)
+        self.enable_mms(auth_data, data[:mms_options], app)
+        self.assign_application_to_location(auth_data, app)
         app
       end
 
@@ -55,7 +55,7 @@ module Bandwidth
       def self.search_and_order_numbers(auth_data, application, query, &query_builder)
         builder = Builder::XmlMarkup.new()
         xml = builder.Order do |b|
-          query_builder(b)
+          query_builder.call(b) if query_builder
           b.SiteId(data[:name])
           b.PeerId(data[:callback_url])
         end
@@ -65,14 +65,16 @@ module Bandwidth
         Timeout::timeout(query[:timeout] || 60) do
           while true do
             sleep 0.5
-            resp = self.make_iris_request(auth_data, :get, "/orders/#{order_id}", nil, configure_connection)
+            resp = self.make_iris_request(auth_data, :get, "/orders/#{order_id}")
             status = self.find_first_descendant(resp[0], "OrderStatus")
-            return resp[0] if success_statuses.include?(status)
+            numbers = self.find_first_descendant(resp[0], "CompletedNumbers")["TelephoneNumber"]
+            numbers = [numbers] unless numbers.is_a?(Array)
+            return numbers.map {|n| n["FullNumber"]} if success_statuses.include?(status)
           end
         end
       end
 
-      private def self.create_application(auth_data, data, &configure_connection)
+      private def self.create_application(auth_data, data)
         builder = Builder::XmlMarkup.new()
         xml = builder.Application do |b|
           b.AppName(data[:name])
@@ -84,21 +86,21 @@ module Bandwidth
             end
           end
         end
-        resp = self.make_iris_request(auth_data, :post, "/applications", xml.target!, configure_connection)
+        resp = self.make_iris_request(auth_data, :post, "/applications", xml.target!)
         self.find_first_descendant(resp[0], "ApplicationId")
       end
 
-      private def self.create_location(auth_data, data, &configure_connection)
+      private def self.create_location(auth_data, data)
         builder = Builder::XmlMarkup.new()
         xml = builder.SipPeer do |b|
           b.PeerName(data[:name])
           b.IsDefaultPeer(data[:callback_url])
         end
-        resp = self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers", xml.target!, configure_connection)
+        resp = self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers", xml.target!)
         (resp[1]["Location"] || "").split!("/").last
       end
 
-      private def self.enable_sms(auth_data, options, application, &configure_connection)
+      private def self.enable_sms(auth_data, options, application)
         return if !options || options[:enabled] == false
         builder = Builder::XmlMarkup.new()
         xml = builder.SipPeerSmsFeature do |b|
@@ -116,10 +118,10 @@ module Bandwidth
             bb.ProxyPeerId("539692")
           end
         end
-        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", xml.target!, configure_connection)
+        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", xml.target!)
       end
 
-      private def self.enable_mms(auth_data, options, application, &configure_connection)
+      private def self.enable_mms(auth_data, options, application)
         return if !options || options[:enabled] == false
         builder = Builder::XmlMarkup.new()
         xml = builder.MmsFeature do |b|
@@ -134,32 +136,32 @@ module Bandwidth
             end
           end
         end
-        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/mms", xml.target!, configure_connection)
+        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/mms", xml.target!)
       end
 
-      private def self.assign_application_to_location(auth_data, application, &configure_connection)
+      private def self.assign_application_to_location(auth_data, application)
         builder = Builder::XmlMarkup.new()
         xml = builder.ApplicationsSettings do |b|
           b.HttpMessagingV2AppId(application[:application_id])
         end
-        self.make_iris_request(auth_data, :put, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/applicationSettings", xml.target!, configure_connection)
+        self.make_iris_request(auth_data, :put, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/applicationSettings", xml.target!)
       end
 
-      private def self.create_iris_request(auth_data, method, &configure_connection)
+      private def self.create_iris_request(auth_data, method)
         Faraday.new("https://dashboard.bandwidth.com") { |faraday|
           faraday.basic_auth(auth_data[:user_name], auth_data[:password])
           faraday.headers['Accept'] = 'application/xml'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
-          if configure_connection
-            configure_connection.call(faraday)
+          if @@configure_connection
+            @@configure_connection.call(faraday)
           else
             faraday.adapter(Faraday.default_adapter)
           end
         }
       end
 
-      private def self.make_iris_request(auth_data, method, path, xml = nil, &configure_connection)
-        connection = self.create_iris_request(auth_data, method, path, configure_connection)
+      private def self.make_iris_request(auth_data, method, path, xml = nil)
+        connection = self.create_iris_request(auth_data, method, path)
         full_path = "/api/accounts/#{auth_data[:account_id]}#{path}"
         response =  connection.run_request(method, full_path, xml, if xml then {'Content-Type' => 'application/xml'} else nil end)
         body = self.check_response(response)
