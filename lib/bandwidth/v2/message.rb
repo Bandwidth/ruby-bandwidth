@@ -17,6 +17,18 @@ module Bandwidth
       end
       wrap_client_arg :create
 
+      # Create messaging application
+      # @param auth_data [Hash] bandwidth dashboard auth data
+      # @param data [Hash] options to create a messaging application
+      # @return [Hash] created application data
+      # @example
+      #   application = Message.create_messaging_application(auth_data, {
+      #     name: 'My messaging application',
+      #     callback_url: 'http://server/to/handle/messages/events',
+      #     location_name: 'current',
+      #     sms_options: {toll_free_enabled: true},
+      #     mms_options: {enabled: true}
+      #   })
       def self.create_messaging_application(auth_data, data, &configure_connection)
         app = {
           :application_id => self.create_application(auth_data, data, configure_connection),
@@ -28,13 +40,26 @@ module Bandwidth
         app
       end
 
-      def self.search_and_order_numbers(auth_data, application, query, &configure_connection)
+      # Look for and reserve phone numbers for messaging application
+      # @param auth_data [Hash] bandwidth dashboard auth data
+      # @param application [Hash] messaging application data
+      # @param query [Hash] search parameters
+      # @return [Array] list of reserved phone numbers
+      # @example
+      #   numbers = Message.search_and_order_numbers(auth_data, application) do |query|
+      #     query.AreaCodeSearchAndOrderType do |b|
+      #         b.AreaCode("910")
+      #         b.Quantity(10)
+      #     end
+      #   end
+      def self.search_and_order_numbers(auth_data, application, query, &query_builder)
         builder = Builder::XmlMarkup.new()
         xml = builder.Order do |b|
+          query_builder(b)
           b.SiteId(data[:name])
           b.PeerId(data[:callback_url])
         end
-        resp = self.make_iris_request(auth_data, :post, "/orders", xml.target!, configure_connection)
+        resp = self.make_iris_request(auth_data, :post, "/orders", xml.target!)
         order_id = self.find_first_descendant(resp[0], "id")
         success_statuses = ["COMPLETE", "PARTIAL"]
         Timeout::timeout(query[:timeout] || 60) do
