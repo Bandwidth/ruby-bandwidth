@@ -1,4 +1,5 @@
 require 'timeout'
+require 'active_support/xml_mini'
 
 module Bandwidth
   module V2
@@ -52,31 +53,32 @@ module Bandwidth
       #         b.Quantity(10)
       #     end
       #   end
-      def self.search_and_order_numbers(auth_data, application, query, &query_builder)
+      def self.search_and_order_numbers(auth_data, application, timeout = 60, &query_builder)
         builder = Builder::XmlMarkup.new()
-        xml = builder.Order do |b|
+        builder.Order do |b|
           query_builder.call(b) if query_builder
-          b.SiteId(data[:name])
-          b.PeerId(data[:callback_url])
+          b.SiteId(auth_data[:subaccount_id])
+          b.PeerId(application[:location_id])
         end
-        resp = self.make_iris_request(auth_data, :post, "/orders", xml.target!)
-        order_id = self.find_first_descendant(resp[0], "id")
+        resp = self.make_iris_request(auth_data, :post, "/orders", builder.target!)
+        order_id = self.find_first_descendant(resp[0], :id)
         success_statuses = ["COMPLETE", "PARTIAL"]
-        Timeout::timeout(query[:timeout] || 60) do
+        Timeout::timeout(timeout || 60) do
           while true do
             sleep 0.5
             resp = self.make_iris_request(auth_data, :get, "/orders/#{order_id}")
-            status = self.find_first_descendant(resp[0], "OrderStatus")
-            numbers = self.find_first_descendant(resp[0], "CompletedNumbers")["TelephoneNumber"]
+            status = self.find_first_descendant(resp[0], :order_status)
+            numbers = self.find_first_descendant(resp[0], :completed_numbers)[:telephone_number]
             numbers = [numbers] unless numbers.is_a?(Array)
-            return numbers.map {|n| n["FullNumber"]} if success_statuses.include?(status)
+            return numbers.map {|n| n[:full_number]} if success_statuses.include?(status)
           end
         end
       end
 
-      private def self.create_application(auth_data, data)
+      private
+      def self.create_application(auth_data, data)
         builder = Builder::XmlMarkup.new()
-        xml = builder.Application do |b|
+        builder.Application do |b|
           b.AppName(data[:name])
           b.CallbackUrl(data[:callback_url])
           b.CallBackCreds do |bb|
@@ -86,27 +88,27 @@ module Bandwidth
             end
           end
         end
-        resp = self.make_iris_request(auth_data, :post, "/applications", xml.target!)
-        self.find_first_descendant(resp[0], "ApplicationId")
+        resp = self.make_iris_request(auth_data, :post, "/applications", builder.target!)
+        self.find_first_descendant(resp[0], :application_id)
       end
 
-      private def self.create_location(auth_data, data)
+      def self.create_location(auth_data, data)
         builder = Builder::XmlMarkup.new()
-        xml = builder.SipPeer do |b|
-          b.PeerName(data[:name])
-          b.IsDefaultPeer(data[:callback_url])
+        builder.SipPeer do |b|
+          b.PeerName(data[:location_name])
+          b.IsDefaultPeer(data[:is_default_location])
         end
-        resp = self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers", xml.target!)
-        (resp[1]["Location"] || "").split!("/").last
+        resp = self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers", builder.target!)
+        (resp[1]["Location"] || "").split("/").last
       end
 
-      private def self.enable_sms(auth_data, options, application)
+      def self.enable_sms(auth_data, options, application)
         return if !options || options[:enabled] == false
         builder = Builder::XmlMarkup.new()
-        xml = builder.SipPeerSmsFeature do |b|
+        builder.SipPeerSmsFeature do |b|
           b.SipPeerSmsFeatureSettings do |bb|
-            bb.TollFree(options[:toll_free_enabled])
-            bb.ShortCode(options[:short_code_enabled])
+            bb.TollFree(options[:toll_free_enabled] || false)
+            bb.ShortCode(options[:short_code_enabled] || false)
             bb.Protocol("HTTP")
             bb.Zone1(true)
             bb.Zone2(false)
@@ -118,13 +120,13 @@ module Bandwidth
             bb.ProxyPeerId("539692")
           end
         end
-        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", xml.target!)
+        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", builder.target!)
       end
 
-      private def self.enable_mms(auth_data, options, application)
+      def self.enable_mms(auth_data, options, application)
         return if !options || options[:enabled] == false
         builder = Builder::XmlMarkup.new()
-        xml = builder.MmsFeature do |b|
+        builder.MmsFeature do |b|
           b.MmsSettings do |bb|
             bb.protocol("HTTP")
           end
@@ -136,18 +138,18 @@ module Bandwidth
             end
           end
         end
-        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/mms", xml.target!)
+        self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/mms", builder.target!)
       end
 
-      private def self.assign_application_to_location(auth_data, application)
+      def self.assign_application_to_location(auth_data, application)
         builder = Builder::XmlMarkup.new()
-        xml = builder.ApplicationsSettings do |b|
+        builder.ApplicationsSettings do |b|
           b.HttpMessagingV2AppId(application[:application_id])
         end
-        self.make_iris_request(auth_data, :put, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/applicationSettings", xml.target!)
+        self.make_iris_request(auth_data, :put, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/applicationSettings", builder.target!)
       end
 
-      private def self.create_iris_request(auth_data, method)
+      def self.create_iris_request(auth_data)
         Faraday.new("https://dashboard.bandwidth.com") { |faraday|
           faraday.basic_auth(auth_data[:user_name], auth_data[:password])
           faraday.headers['Accept'] = 'application/xml'
@@ -160,16 +162,21 @@ module Bandwidth
         }
       end
 
-      private def self.make_iris_request(auth_data, method, path, xml = nil)
-        connection = self.create_iris_request(auth_data, method, path)
+      def self.configure_connection(handler)
+        @@configure_connection = handler
+      end
+
+      def self.make_iris_request(auth_data, method, path, xml = nil)
+        connection = self.create_iris_request(auth_data)
         full_path = "/api/accounts/#{auth_data[:account_id]}#{path}"
         response =  connection.run_request(method, full_path, xml, if xml then {'Content-Type' => 'application/xml'} else nil end)
         body = self.check_response(response)
         [body || {}, response.headers || {}]
       end
 
-      private def self.check_response(response)
-        parsed_body = self.parse_xml(response.body || '')
+      def self.check_response(response)
+        doc = ActiveSupport::XmlMini.parse(response.body || '')
+        parsed_body = self.process_parsed_doc(doc.values.first)
         code = self.find_first_descendant(parsed_body, :error_code)
         description = self.find_first_descendant(parsed_body, :description)
         unless code
@@ -184,16 +191,16 @@ module Bandwidth
               description = self.find_first_descendant(parsed_body, :result_message)
             else
               errors = [errors] if errors.is_a?(Hash)
-              raise Errors::AgregateError.new(errors.map {|e| Errors::GenericError.new(e[:code], e[:description], response.status)})
+              raise Errors::AgregateError.new(errors.map {|e| Errors::GenericIrisError.new(e[:code], e[:description], response.status)})
             end
           end
         end
-        raise Errors::GenericError.new(code, description, response.status) if code && description && code != '0' && code != 0
-        raise Errors::GenericError.new('', "Http code #{response.status}", response.status) if response.status >= 400
+        raise Errors::GenericIrisError.new(code, description, response.status) if code && description && code != '0' && code != 0
+        raise Errors::GenericIrisError.new('', "Http code #{response.status}", response.status) if response.status >= 400
         parsed_body
       end
 
-      private def self.find_first_descendant v, name
+      def self.find_first_descendant v, name
         result = nil
         case
           when v.is_a?(Array)
@@ -215,12 +222,7 @@ module Bandwidth
         result
       end
 
-      private def self.parse_xml(xml)
-        doc = ActiveSupport::XmlMini.parse(xml)
-        self.process_parsed_doc(doc.values.first)
-      end
-
-      private def self.process_parsed_doc(v)
+      def self.process_parsed_doc(v)
         case
           when v.is_a?(Array)
             v.map {|i| self.process_parsed_doc(i)}
