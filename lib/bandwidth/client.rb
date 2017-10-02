@@ -38,7 +38,6 @@ module Bandwidth
       end
       raise Errors::MissingCredentialsError.new() if (user_id || '').length == 0 || (api_token || '').length == 0 || (api_secret || '').length == 0
       @concat_user_path = lambda {|path| "/users/#{user_id}" + (if path[0] == "/" then path else "/#{path}" end) }
-      @build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
       @set_adapter = lambda {|faraday| faraday.adapter(Faraday.default_adapter)}
       @create_connection = lambda{||
         Faraday.new(api_endpoint) { |faraday|
@@ -83,15 +82,16 @@ module Bandwidth
     # @param path [String] path of url (exclude api verion and endpoint) to make call
     # @param data [Hash] data  which will be sent with request (for :get and :delete request they will be sent with query in url)
     # @return [Array] array with 2 elements: parsed json data of response and response headers
-    def make_request(method, path, data = {})
+    def make_request(method, path, data = {}, api_version = 'v1')
       d  = camelcase(data)
+      build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
       connection = @create_connection.call()
       response =  if method == :get || method == :delete
-                    connection.run_request(method, @build_path.call(path), nil, nil) do |req|
+                    connection.run_request(method, build_path.call(path), nil, nil) do |req|
                       req.params = d unless d == nil || d.empty?
                     end
                   else
-                    connection.run_request(method, @build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
+                    connection.run_request(method, build_path.call(path), d.to_json(), {'Content-Type' => 'application/json'})
                   end
       check_response(response)
       r = if response.body.strip().size > 0 then symbolize(JSON.parse(response.body)) else {} end

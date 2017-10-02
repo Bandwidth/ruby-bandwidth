@@ -20,6 +20,7 @@ require 'bandwidth/number_info'
 require 'bandwidth/phone_number'
 require 'bandwidth/recording'
 
+require 'bandwidth/v2/message'
 
 require 'bandwidth/xml/response'
 require 'bandwidth/xml/xml_verb'
