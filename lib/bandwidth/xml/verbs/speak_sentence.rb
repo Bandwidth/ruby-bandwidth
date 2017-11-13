@@ -9,7 +9,7 @@ module Bandwidth
           xml.SpeakSentence(sentence, compact_hash({
            'voice' => voice,
            'locale' => locale,
-           'gender' => gender
+           'gender' => gender || 'female'
           }))
         end
       end
