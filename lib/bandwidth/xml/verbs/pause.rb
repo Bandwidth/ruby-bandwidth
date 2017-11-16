@@ -6,6 +6,7 @@ module Bandwidth
         include XmlVerb
 
         def to_xml(xml)
+          warn "[DEPRECATION] Verb 'Pause' will be removed in Bandwidth XML v2"
           xml.Pause(compact_hash({
            'duration' => duration
           }))

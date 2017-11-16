@@ -6,6 +6,7 @@ module Bandwidth
         include XmlVerb
 
         def to_xml(xml)
+          warn "[DEPRECATION] Verb 'Reject' will be removed in Bandwidth XML v2"
           xml.Reject(compact_hash({
            'reason' => reason
           }))

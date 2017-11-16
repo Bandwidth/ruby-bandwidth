@@ -6,6 +6,7 @@ module Bandwidth
         include XmlVerb
 
         def to_xml(xml)
+          warn "[DEPRECATION] Attribute 'digits' of 'PlayAudio' will be removed in Bandwidth XML v2" if digits
           xml.PlayAudio(url, compact_hash({
            'digits' => digits
           }))
