@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Andrey Belchikov"]
   spec.description   = "Gem for integrating to Bandwidth's Catapult API"
   spec.summary       = spec.description
-  spec.homepage      = "https://github.com/bandwidthcom/ruby-bandwidth"
+  spec.homepage      = "https://github.com/Bandwidth/ruby-bandwidth"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
