@@ -34,5 +34,6 @@ require 'bandwidth/xml/verbs/reject'
 require 'bandwidth/xml/verbs/send_message'
 require 'bandwidth/xml/verbs/speak_sentence'
 require 'bandwidth/xml/verbs/transfer'
+require 'bandwidth/xml/verbs/dtmf'
 
 require 'bandwidth/version'
