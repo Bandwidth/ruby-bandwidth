@@ -39,4 +39,11 @@ describe Bandwidth::Message do
       expect(r[2][:error]).not_to be_nil
     end
   end
+
+  describe '#patch' do
+    it 'should change a message' do
+      client.stubs.patch('/v1/users/userId/messages/1', '{"text":""}') {|env| [200, {}, '']}
+      Message.patch(client, '1', {:text=>''})
+    end
+  end
 end

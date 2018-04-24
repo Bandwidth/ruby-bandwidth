@@ -51,5 +51,16 @@ module Bandwidth
       end
     end
     wrap_client_arg :create
+
+    # Redact the text of a previously sent message
+    # @param client [Client] optional client instance to make requests
+    # @param id [String] id of message
+    # @param data [Hash] data to change
+    # @example
+    #   Message.patch(client, "id" {:text=>""})
+    def self.patch(client, id, data)
+      client.make_request(:patch, client.concat_user_path("#{MESSAGE_PATH}/#{id}"), data)[0]
+    end
+    wrap_client_arg :patch
   end
 end
