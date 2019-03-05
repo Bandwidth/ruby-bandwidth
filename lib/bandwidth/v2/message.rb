@@ -15,7 +15,6 @@ module Bandwidth
       #   message = Message.create(client, {:from=>"from", :to=>["to"], :text=>"text", :application_id=>"messagingApplicationId"})
       def self.create(client, data)
         client.make_request(:post, client.concat_user_path(MESSAGE_PATH), data, 'v2', 'https://messaging.bandwidth.com/api')[0]
-        return '0'
       end
       wrap_client_arg :create
 
