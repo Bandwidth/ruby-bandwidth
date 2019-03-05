@@ -4,6 +4,8 @@
 
 Bandwidth [Bandwidth's App Platform](http://ap.bandwidth.com/?utm_medium=social&utm_source=github&utm_campaign=dtolb&utm_content=) Ruby SDK
 
+Notice: As of April 2019, versions of ruby-bandwidth less than 2.0.0 will not be compatible with Bandwidth's V2 Messaging. If you are using Bandwidth's V2 Messaging, you will need to update your ruby-bandwidth gem version to 2.0.0 or above. If you are not using Bandwidth's V2 Messaging, you do not need to update. 
+
 With ruby-bandwidth  you have access to the entire set of API methods including:
 * **Account** - get user's account data and transactions,
 * **Application** - manage user's applications,
