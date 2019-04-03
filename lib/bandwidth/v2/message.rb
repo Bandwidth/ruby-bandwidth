@@ -14,6 +14,10 @@ module Bandwidth
       # @example
       #   message = Message.create(client, {:from=>"from", :to=>["to"], :text=>"text", :application_id=>"messagingApplicationId"})
       def self.create(client, data)
+        #Note: The version parameter is being set to 'api/v2' as a workaround to the new base URL
+        #being 'https://messaging.bandwidth.com/api'. Creating a Faraday object with a base URI of
+        #'https://messaging.bandwidth.com/api' is not doable because it is not a valid base URI (the '/api' is thrown out).
+        #Instead, the 'api/' section is being appended to the version parameter.
         client.make_request(:post, client.concat_user_path(MESSAGE_PATH), data, 'api/v2', 'https://messaging.bandwidth.com')[0]
       end
       wrap_client_arg :create
