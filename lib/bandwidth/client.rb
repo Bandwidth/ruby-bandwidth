@@ -53,6 +53,7 @@ module Bandwidth
           @configure_connection.call(faraday) if @configure_connection
         }
       }
+      @created_connections = Hash.new
     end
 
     attr_reader :api_endpoint, :api_version
@@ -89,21 +90,25 @@ module Bandwidth
       d  = camelcase(data)
       build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
       
-      # Not so ideal solution to the V1/V2 endpoint split
-      # If no endpoint is defined, use previously created connection
+      # A somewhat less ideal solution to the V1/V2 endpoint split
+      # If no endpoint is defined, use default connection
       if api_endpoint.length == 0
         create_connection = @create_connection
-      # Else create a new temporary connection using the new endpoint
+      # Otherwise retrieve (or create if needed) the connection based on the given api_endpoint
       else
-        create_connection = lambda{||
-          Faraday.new(api_endpoint) { |faraday|
-            faraday.basic_auth(@api_token, @api_secret)
-            faraday.headers['Accept'] = 'application/json'
-            faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
-            @set_adapter.call(faraday)
-            @configure_connection.call(faraday) if @configure_connection
+        if not @created_connections.key?(api_endpoint)
+          new_connection = lambda{||
+            Faraday.new(api_endpoint) { |faraday|
+              faraday.basic_auth(@api_token, @api_secret)
+              faraday.headers['Accept'] = 'application/json'
+              faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
+              @set_adapter.call(faraday)
+              @configure_connection.call(faraday) if @configure_connection
+            }
           }
-        }
+          @created_connections[api_endpoint] = new_connection
+        end
+        create_connection = @created_connections[api_endpoint]
       end
 
       connection = create_connection.call()
