@@ -39,17 +39,21 @@ module Bandwidth
       raise Errors::MissingCredentialsError.new() if (user_id || '').length == 0 || (api_token || '').length == 0 || (api_secret || '').length == 0
       @concat_user_path = lambda {|path| "/users/#{user_id}" + (if path[0] == "/" then path else "/#{path}" end) }
       @set_adapter = lambda {|faraday| faraday.adapter(Faraday.default_adapter)}
+      @api_endpoint = api_endpoint
+      @api_version = api_version
+      @api_token = api_token
+      @api_secret = api_secret
+      @configure_connection = configure_connection
       @create_connection = lambda{||
-        Faraday.new(api_endpoint) { |faraday|
-          faraday.basic_auth(api_token, api_secret)
+        Faraday.new(@api_endpoint) { |faraday|
+          faraday.basic_auth(@api_token, @api_secret)
           faraday.headers['Accept'] = 'application/json'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
           @set_adapter.call(faraday)
-          configure_connection.call(faraday) if configure_connection
+          @configure_connection.call(faraday) if @configure_connection
         }
       }
-      @api_endpoint = api_endpoint
-      @api_version = api_version
+      @created_connections = Hash.new
     end
 
     attr_reader :api_endpoint, :api_version
@@ -82,10 +86,32 @@ module Bandwidth
     # @param path [String] path of url (exclude api verion and endpoint) to make call
     # @param data [Hash] data  which will be sent with request (for :get and :delete request they will be sent with query in url)
     # @return [Array] array with 2 elements: parsed json data of response and response headers
-    def make_request(method, path, data = {}, api_version = 'v1')
+    def make_request(method, path, data = {}, api_version = 'v1', api_endpoint = '')
       d  = camelcase(data)
       build_path = lambda {|path| "/#{api_version}" + (if path[0] == "/" then path else "/#{path}" end) }
-      connection = @create_connection.call()
+      
+      # A somewhat less ideal solution to the V1/V2 endpoint split
+      # If no endpoint is defined, use default connection
+      if api_endpoint.length == 0
+        create_connection = @create_connection
+      # Otherwise retrieve (or create if needed) the connection based on the given api_endpoint
+      else
+        if not @created_connections.key?(api_endpoint)
+          new_connection = lambda{||
+            Faraday.new(api_endpoint) { |faraday|
+              faraday.basic_auth(@api_token, @api_secret)
+              faraday.headers['Accept'] = 'application/json'
+              faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
+              @set_adapter.call(faraday)
+              @configure_connection.call(faraday) if @configure_connection
+            }
+          }
+          @created_connections[api_endpoint] = new_connection
+        end
+        create_connection = @created_connections[api_endpoint]
+      end
+
+      connection = create_connection.call()
       response =  if method == :get || method == :delete
                     connection.run_request(method, build_path.call(path), nil, nil) do |req|
                       req.params = d unless d == nil || d.empty?
