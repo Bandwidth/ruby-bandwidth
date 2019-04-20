@@ -13,7 +13,19 @@ module Bandwidth
            'maxDigits' => max_digits,
            'interDigitTimeout' => inter_digit_timeout,
            'bargeable' => bargeable
-          }))
+          })) do
+            def embedded_xml(xml, property, type)
+              if property
+                s = if property.is_a?(type)
+                    then property
+                    else type.new(property)
+                    end
+                s.to_xml(xml)
+              end
+            end
+            embedded_xml(xml, speak_sentence, SpeakSentence)
+            embedded_xml(xml, play_audio, PlayAudio)
+          end
         end
       end
     end
