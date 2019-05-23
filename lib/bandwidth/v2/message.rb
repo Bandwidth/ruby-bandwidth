@@ -158,7 +158,7 @@ module Bandwidth
           faraday.basic_auth(auth_data[:user_name], auth_data[:password])
           faraday.headers['Accept'] = 'application/xml'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
-          if @@configure_connection
+          if defined?(@@configure_connection)
             @@configure_connection.call(faraday)
           else
             faraday.adapter(Faraday.default_adapter)
