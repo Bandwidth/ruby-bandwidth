@@ -240,7 +240,8 @@ Send SMS (v2)
   end
 
   # Now you can send messages from reserved numbers. Don't forget to pass :application_id
-  message = Bandwidth::V2::Message.create({:from => numbers[0], :to => ["+191955512142"], :text => "Test", :application_id => application[:application_id]})
+  client = Bandwidth::Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret")
+  message = Bandwidth::V2::Message.create(client, {:from => numbers[0], :to => ["+191955512142"], :text => "Test", :application_id => application[:application_id]})
 ```
 
 # Documentation generation
