@@ -81,7 +81,7 @@ describe Bandwidth::V2::Message do
 
   describe '#enable_sms' do
     it 'should change sms settings' do
-      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/sms', '<SipPeerSmsFeature><SipPeerSmsFeatureSettings><TollFree>true</TollFree><ShortCode>false</ShortCode><Protocol>HTTP</Protocol><Zone1>true</Zone1><Zone2>false</Zone2><Zone3>false</Zone3><Zone4>false</Zone4><Zone5>false</Zone5></SipPeerSmsFeatureSettings><HttpSettings><ProxyPeerId>539692</ProxyPeerId></HttpSettings></SipPeerSmsFeature>') {|env| [201, {}, '']}
+      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/sms', '<SipPeerSmsFeature><SipPeerSmsFeatureSettings><TollFree>true</TollFree><ShortCode>false</ShortCode><Protocol>HTTP</Protocol><Zone1>true</Zone1><Zone2>false</Zone2><Zone3>false</Zone3><Zone4>false</Zone4><Zone5>false</Zone5></SipPeerSmsFeatureSettings><HttpSettings><ProxyPeerId></ProxyPeerId></HttpSettings></SipPeerSmsFeature>') {|env| [201, {}, '']}
       V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
       V2::Message.send(:enable_sms, {user_name: 'user', password: 'password', account_id: 'accountId', subaccount_id: 'subaccountId'}, {toll_free_enabled: true}, {application_id: 'appId', location_id: 'locationId'})
     end
@@ -93,7 +93,7 @@ describe Bandwidth::V2::Message do
 
   describe '#enable_mms' do
     it 'should change mms settings' do
-      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/mms', '<MmsFeature><MmsSettings><protocol>HTTP</protocol></MmsSettings><Protocols><HTTP><HttpSettings><ProxyPeerId>539692</ProxyPeerId></HttpSettings></HTTP></Protocols></MmsFeature>') {|env| [201, {}, '']}
+      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/mms', '<MmsFeature><MmsSettings><Protocol>HTTP</Protocol></MmsSettings><Protocols><HTTP><HttpSettings><ProxyPeerId></ProxyPeerId></HttpSettings></HTTP></Protocols></MmsFeature>') {|env| [201, {}, '']}
       V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
       V2::Message.send(:enable_mms, {user_name: 'user', password: 'password', account_id: 'accountId', subaccount_id: 'subaccountId'}, {enabled: true}, {application_id: 'appId', location_id: 'locationId'})
     end
@@ -115,8 +115,8 @@ describe Bandwidth::V2::Message do
     it 'should make create a messaging application and location' do
       client.stubs.post('/api/accounts/accountId/applications', '<Application><AppName>Test</AppName><CallbackUrl>url</CallbackUrl><CallBackCreds></CallBackCreds></Application>') {|env| [200, {}, '<ApplicationProvisioningResponse><Application><ApplicationId>id</ApplicationId></Application></ApplicationProvisioningResponse>']}
       client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers', '<SipPeer><PeerName>current</PeerName><IsDefaultPeer>false</IsDefaultPeer></SipPeer>') {|env| [201, {'Location' => 'httpl//localhoost/locationId'}, '']}
-      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/sms', '<SipPeerSmsFeature><SipPeerSmsFeatureSettings><TollFree>true</TollFree><ShortCode>false</ShortCode><Protocol>HTTP</Protocol><Zone1>true</Zone1><Zone2>false</Zone2><Zone3>false</Zone3><Zone4>false</Zone4><Zone5>false</Zone5></SipPeerSmsFeatureSettings><HttpSettings><ProxyPeerId>539692</ProxyPeerId></HttpSettings></SipPeerSmsFeature>') {|env| [201, {}, '']}
-      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/mms', '<MmsFeature><MmsSettings><protocol>HTTP</protocol></MmsSettings><Protocols><HTTP><HttpSettings><ProxyPeerId>539692</ProxyPeerId></HttpSettings></HTTP></Protocols></MmsFeature>') {|env| [201, {}, '']}
+      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/sms', '<SipPeerSmsFeature><SipPeerSmsFeatureSettings><TollFree>true</TollFree><ShortCode>false</ShortCode><Protocol>HTTP</Protocol><Zone1>true</Zone1><Zone2>false</Zone2><Zone3>false</Zone3><Zone4>false</Zone4><Zone5>false</Zone5></SipPeerSmsFeatureSettings><HttpSettings><ProxyPeerId></ProxyPeerId></HttpSettings></SipPeerSmsFeature>') {|env| [201, {}, '']}
+      client.stubs.post('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/features/mms', '<MmsFeature><MmsSettings><Protocol>HTTP</Protocol></MmsSettings><Protocols><HTTP><HttpSettings><ProxyPeerId></ProxyPeerId></HttpSettings></HTTP></Protocols></MmsFeature>') {|env| [201, {}, '']}
       client.stubs.put('/api/accounts/accountId/sites/subaccountId/sippeers/locationId/products/messaging/applicationSettings', '<ApplicationsSettings><HttpMessagingV2AppId>id</HttpMessagingV2AppId></ApplicationsSettings>') {|env| [200, {}, '']}
       V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
       app = V2::Message.create_messaging_application({user_name: 'user', password: 'password', account_id: 'accountId', subaccount_id: 'subaccountId'}, {name: 'Test', callback_url: 'url', location_name: 'current', is_default_location: false, sms_options: {toll_free_enabled: true}, mms_options: {enabled: true}})
