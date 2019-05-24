@@ -121,7 +121,7 @@ module Bandwidth
             bb.Zone5(false)
           end
           b.HttpSettings do |bb|
-            bb.ProxyPeerId("539692")
+            bb.ProxyPeerId("")
           end
         end
         self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", builder.target!)
@@ -132,16 +132,17 @@ module Bandwidth
         builder = Builder::XmlMarkup.new()
         builder.MmsFeature do |b|
           b.MmsSettings do |bb|
-            bb.protocol("HTTP")
+            bb.Protocol("HTTP")
           end
           b.Protocols do |bb|
             bb.HTTP do |bbb|
               bbb.HttpSettings do |bbbb|
-                bbbb.ProxyPeerId("539692")
+                bbbb.ProxyPeerId("")
               end
             end
           end
         end
+        puts builder.target!
         self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/mms", builder.target!)
       end
 
@@ -179,6 +180,7 @@ module Bandwidth
       end
 
       def self.check_response(response)
+        puts response.body
         doc = ActiveSupport::XmlMini.parse(response.body || '')
         parsed_body = self.process_parsed_doc(doc.values.first)
         code = self.find_first_descendant(parsed_body, :error_code)
