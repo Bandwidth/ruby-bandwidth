@@ -232,7 +232,7 @@ Send SMS (v2)
   })
 
   # After that you should reserve 1 or some phone nubmers on Bandwidth Dashboard
-  numbers = Message.search_and_order_numbers(auth_data, application) do |query|
+  numbers = Bandwidth::V2::Message.search_and_order_numbers(auth_data, application) do |query|
       query.AreaCodeSearchAndOrderType do |b|
          b.AreaCode("910")
          b.Quantity(1)
