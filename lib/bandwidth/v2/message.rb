@@ -121,7 +121,7 @@ module Bandwidth
             bb.Zone5(false)
           end
           b.HttpSettings do |bb|
-            bb.ProxyPeerId("539692")
+            bb.ProxyPeerId("")
           end
         end
         self.make_iris_request(auth_data, :post, "/sites/#{auth_data[:subaccount_id]}/sippeers/#{application[:location_id]}/products/messaging/features/sms", builder.target!)
@@ -132,12 +132,12 @@ module Bandwidth
         builder = Builder::XmlMarkup.new()
         builder.MmsFeature do |b|
           b.MmsSettings do |bb|
-            bb.protocol("HTTP")
+            bb.Protocol("HTTP")
           end
           b.Protocols do |bb|
             bb.HTTP do |bbb|
               bbb.HttpSettings do |bbbb|
-                bbbb.ProxyPeerId("539692")
+                bbbb.ProxyPeerId("")
               end
             end
           end
@@ -158,7 +158,7 @@ module Bandwidth
           faraday.basic_auth(auth_data[:user_name], auth_data[:password])
           faraday.headers['Accept'] = 'application/xml'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
-          if @@configure_connection
+          if defined?(@@configure_connection)
             @@configure_connection.call(faraday)
           else
             faraday.adapter(Faraday.default_adapter)
