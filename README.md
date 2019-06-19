@@ -4,7 +4,7 @@
 
 Bandwidth [Bandwidth's App Platform](http://ap.bandwidth.com/?utm_medium=social&utm_source=github&utm_campaign=dtolb&utm_content=) Ruby SDK
 
-Notice: As of April 2019, versions of ruby-bandwidth less than 2.0.0 will not be compatible with Bandwidth's V2 Messaging. If you are using Bandwidth's V2 Messaging, you will need to update your ruby-bandwidth gem version to 2.0.0 or above. If you are not using Bandwidth's V2 Messaging, you do not need to update. 
+Notice: As of April 2019, versions of ruby-bandwidth less than 2.0.0 will not be compatible with Bandwidth's V2 Messaging. If you are using Bandwidth's V2 Messaging, you will need to update your ruby-bandwidth gem version to 2.0.0 or above. If you are not using Bandwidth's V2 Messaging, you do not need to update.
 
 With ruby-bandwidth  you have access to the entire set of API methods including:
 * **Account** - get user's account data and transactions,
@@ -23,7 +23,7 @@ With ruby-bandwidth  you have access to the entire set of API methods including:
 * **PhoneNumber** - get access to user's phone numbers,
 * **Recording** - mamange user's recordings.
 
-Also you can work with Bandwidth XML using special types (in namespace `Bandwidth::Xml`). 
+Also you can work with Bandwidth XML using special types (in namespace `Bandwidth::Xml`).
 ## Install
 
 Via rubygems:
@@ -43,7 +43,7 @@ or add to your Gemfile:
 
 ```ruby
   client = Bandwidth::Client.new(:user_id => "userId", :api_token => "token", :api_secret => "secret")
-  
+
 # Or you can use default client instance
 # Do that only once
   Client.global_options = {:user_id => "userId", :api_token => "token", :api_secret => "secret"}
@@ -105,7 +105,7 @@ Send some SMSes
   statuses = Bandwidth::Message.create(client, [{:from => "+19195551212", :to => "+191955512142", :text => "Test"}, {:from => "+19195551212", :to => "+191955512143", :text => "Test2"}])
 ```
 
-Upload file 
+Upload file
 
 ```ruby
   Bandwidth::Media.upload("avatar.png", File.open("/local/path/to/file.png", "r"), "image/png")
@@ -203,7 +203,7 @@ Generate Bandwidth XML
         })
 
   hangup = Bandwidth::Xml::Verbs::Hangup.new()
-  response << speak_sentence << transfer << hangup 
+  response << speak_sentence << transfer << hangup
 
   # as alternative way we can pass list of verbs to constructor of Response
   # response = Bandwidth::Xml::Response.new([speak_sentence, transfer, hangup])
@@ -221,7 +221,7 @@ Send SMS (v2)
 ```ruby
   auth_data = {user_name: 'user', password: 'password', account_id: 'accountId', subaccount_id: 'subaccountId'}
 
-  # Before sending sms you should have nessagin application on Bandwidth dashboard. You should create it by next call
+  # Before sending sms you should have messaging application on Bandwidth dashboard. You should create it by next call
   application = Bandwidth::V2::Message.create_messaging_application(auth_data, {
       :name => 'My messaging application',
       :callback_url => 'http://server/to/handle/messages/events',
