@@ -153,7 +153,11 @@ module Bandwidth
         when v.is_a?(Hash)
           result = {}
           v.each do |k, val|
-            result[k.to_s().camelcase(:lower)] = camelcase(val)
+            if( k.to_s == 'sip_headers') # Don't camel case the sip headers, they probably start with X- which is required by the API to be upper case
+              result[k.to_s()] = val
+            else     
+              result[k.to_s().camelcase(:lower)] = camelcase(val)
+            end
           end
           result
         else

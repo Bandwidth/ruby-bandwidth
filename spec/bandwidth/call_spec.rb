@@ -30,7 +30,16 @@ describe Bandwidth::Call do
       client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, template_json]}
       expect(Call.create(client, {:from=>'from', :to=>'to'}).to_data()).to eql(template_item)
     end
+      
+    it 'should create a new item with the sip_headers' do
+      raw_data = { :from => "from", :to => "to", :sip_headers => { "X-Header-1" => "header_1" } }
+      client.stubs.post('/v1/users/userId/calls', raw_data.to_json.to_s) {|env| [201, {'Location' => '/v1/users/userId/calls/1'}, '']}
+      client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, template_json]}        
+      expect(Call.create(client,raw_data).to_data()).to eql(template_item)
+    end
+      
   end
+    
 
   describe '#update' do
     it 'should change item' do
