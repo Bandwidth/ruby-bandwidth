@@ -24,6 +24,12 @@ With ruby-bandwidth  you have access to the entire set of API methods including:
 * **Recording** - mamange user's recordings.
 
 Also you can work with Bandwidth XML using special types (in namespace `Bandwidth::Xml`).
+
+## Release Notes
+| Version | Notes |
+|:---|:---|
+| 2.0.4 | Fixed SIP Headers fields for creating a call |
+
 ## Install
 
 Via rubygems:
