@@ -32,10 +32,12 @@ describe Bandwidth::Call do
     end
       
     it 'should create a new item with the sip_headers' do
-      raw_data = { :from => "from", :to => "to", :sip_headers => { "X-Header-1" => "header_1" } }
-      client.stubs.post('/v1/users/userId/calls', raw_data.to_json.to_s) {|env| [201, {'Location' => '/v1/users/userId/calls/1'}, '']}
+      request_data = { :from => "from", :to => "to", :sip_headers => { "X-Header-1" => "header_1" } }
+      response_data = { :from => "from", :to => "to", :sipHeaders => { "X-Header-1" => "header_1" } }
+        
+      client.stubs.post('/v1/users/userId/calls', response_data.to_json.to_s) {|env| [201, {'Location' => '/v1/users/userId/calls/1'}, '']}
       client.stubs.get('/v1/users/userId/calls/1') {|env| [200, {}, template_json]}        
-      expect(Call.create(client,raw_data).to_data()).to eql(template_item)
+      expect(Call.create(client,request_data).to_data()).to eql(template_item)
     end
       
   end
