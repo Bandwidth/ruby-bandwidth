@@ -29,6 +29,7 @@ Also you can work with Bandwidth XML using special types (in namespace `Bandwidt
 | Version | Notes |
 |:---|:---|
 | 2.0.4 | Fixed SIP Headers fields for creating a call |
+| 2.0.5 | Fixed SIP key names |
 
 ## Install
 
