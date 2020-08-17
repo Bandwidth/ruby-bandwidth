@@ -30,6 +30,7 @@ Also you can work with Bandwidth XML using special types (in namespace `Bandwidt
 |:---|:---|
 | 2.0.4 | Fixed SIP Headers fields for creating a call |
 | 2.0.5 | Fixed SIP key names |
+| 2.0.6 | Changed timeout to 140 seconds |
 
 ## Install
 
