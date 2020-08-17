@@ -48,6 +48,7 @@ module Bandwidth
           faraday.basic_auth(@api_token, @api_secret)
           faraday.headers['Accept'] = 'application/json'
           faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
+          faraday.options.timeout = 140
           @set_adapter.call(faraday)
           @configure_connection.call(faraday) if @configure_connection
         }
@@ -101,6 +102,7 @@ module Bandwidth
               faraday.basic_auth(@api_token, @api_secret)
               faraday.headers['Accept'] = 'application/json'
               faraday.headers['User-Agent'] = "ruby-bandwidth/v#{Bandwidth::VERSION}"
+              faraday.options.timeout = 140
               @set_adapter.call(faraday)
               @configure_connection.call(faraday) if @configure_connection
             }
