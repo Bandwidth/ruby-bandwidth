@@ -73,7 +73,7 @@ module Bandwidth
             resp = self.make_iris_request(auth_data, :get, "/orders/#{order_id}")
             status = self.find_first_descendant(resp[0], :order_status)
             numbers_response = self.find_first_descendant(resp[0], :completed_numbers)
-            if not numbers_response.nil? and numbers_response.has_value?(:telephone_number)
+            if not numbers_response.nil? and numbers_response.has_key?(:telephone_number)
               numbers = numbers_response[:telephone_number]
               numbers = [numbers] unless numbers.is_a?(Array)
               return numbers.map {|n| n[:full_number]} if end_statuses.include?(status)
