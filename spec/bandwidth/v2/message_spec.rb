@@ -35,26 +35,6 @@ describe Bandwidth::V2::Message do
 
   describe '#check_response' do
     it 'should check errors 1' do
-      client.stubs.get('/api/accounts/accountId/test') {|env| [200, {}, '<Response><ErrorCode>Code</ErrorCode><Description>Description</Description></Response>']}
-      V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
-      expect{V2::Message.send(:make_iris_request, {user_name: 'user', password: 'password', account_id: 'accountId'}, :get, '/test')}.to raise_error(Errors::GenericIrisError)
-    end
-    it 'should check errors 2' do
-      client.stubs.get('/api/accounts/accountId/test') {|env| [200, {}, '<Response><Error><Code>Code</Code><Description>Description</Description></Error></Response>']}
-      V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
-      expect{V2::Message.send(:make_iris_request, {user_name: 'user', password: 'password', account_id: 'accountId'}, :get, '/test')}.to raise_error(Errors::GenericIrisError)
-    end
-    it 'should check errors 3' do
-      client.stubs.get('/api/accounts/accountId/test') {|env| [200, {}, '<Response><Errors><Code>Code</Code><Description>Description</Description></Errors></Response>']}
-      V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
-      expect{V2::Message.send(:make_iris_request, {user_name: 'user', password: 'password', account_id: 'accountId'}, :get, '/test')}.to raise_error(Errors::AgregateError)
-    end
-    it 'should check errors 4' do
-      client.stubs.get('/api/accounts/accountId/test') {|env| [200, {}, '<Response><resultCode>Code</resultCode><resultMessage>Description</resultMessage></Response>']}
-      V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
-      expect{V2::Message.send(:make_iris_request, {user_name: 'user', password: 'password', account_id: 'accountId'}, :get, '/test')}.to raise_error(Errors::GenericIrisError)
-    end
-    it 'should check errors 5' do
       client.stubs.get('/api/accounts/accountId/test') {|env| [404, {}, '']}
       V2::Message.send(:configure_connection, lambda {|faraday| faraday.adapter(:test, client.stubs)})
       expect{V2::Message.send(:make_iris_request, {user_name: 'user', password: 'password', account_id: 'accountId'}, :get, '/test')}.to raise_error(Errors::GenericIrisError)
