@@ -73,7 +73,7 @@ describe Bandwidth::Client do
     end
 
     it 'should raise error if http status >= 400' do
-      client.stubs.get('/v1/path1') { |env| [400, {}, '{"code": "code", "message": "error"}'] }
+      client.stubs.get('/v1/path1') { |env| [400, {}, 'error'] }
       expect{client.make_request(:get, '/path1')}.to raise_error(Errors::GenericError, "error")
     end
   end
