@@ -66,15 +66,20 @@ module Bandwidth
         end
         resp = self.make_iris_request(auth_data, :post, "/orders", builder.target!)
         order_id = self.find_first_descendant(resp[0], :id)
-        success_statuses = ["COMPLETE", "PARTIAL"]
+        end_statuses = ["COMPLETE", "PARTIAL", "FAILED", "BACKORDERED"]
         Timeout::timeout(timeout || 60) do
           while true do
             sleep 0.5
             resp = self.make_iris_request(auth_data, :get, "/orders/#{order_id}")
             status = self.find_first_descendant(resp[0], :order_status)
-            numbers = self.find_first_descendant(resp[0], :completed_numbers)[:telephone_number]
-            numbers = [numbers] unless numbers.is_a?(Array)
-            return numbers.map {|n| n[:full_number]} if success_statuses.include?(status)
+            numbers_response = self.find_first_descendant(resp[0], :completed_numbers)
+            if not numbers_response.nil? and numbers_response.has_key?(:telephone_number)
+              numbers = numbers_response[:telephone_number]
+              numbers = [numbers] unless numbers.is_a?(Array)
+              return numbers.map {|n| n[:full_number]} if end_statuses.include?(status)
+            else
+              return [] if end_statuses.include?(status)
+            end
           end
         end
       end
@@ -179,28 +184,9 @@ module Bandwidth
       end
 
       def self.check_response(response)
+        raise Errors::GenericIrisError.new('', "Http code #{response.status}", response.status) if response.status >= 400
         doc = ActiveSupport::XmlMini.parse(response.body || '')
         parsed_body = self.process_parsed_doc(doc.values.first)
-        code = self.find_first_descendant(parsed_body, :error_code)
-        description = self.find_first_descendant(parsed_body, :description)
-        unless code
-          error = self.find_first_descendant(parsed_body, :error)
-          if error
-            code = error[:code]
-            description = error[:description]
-          else
-            errors = self.find_first_descendant(parsed_body, :errors)
-            if errors == nil || errors.length == 0
-              code = self.find_first_descendant(parsed_body, :result_code)
-              description = self.find_first_descendant(parsed_body, :result_message)
-            else
-              errors = [errors] if errors.is_a?(Hash)
-              raise Errors::AgregateError.new(errors.map {|e| Errors::GenericIrisError.new(e[:code], e[:description], response.status)})
-            end
-          end
-        end
-        raise Errors::GenericIrisError.new(code, description, response.status) if code && description && code != '0' && code != 0
-        raise Errors::GenericIrisError.new('', "Http code #{response.status}", response.status) if response.status >= 400
         parsed_body
       end
 

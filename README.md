@@ -31,6 +31,7 @@ Also you can work with Bandwidth XML using special types (in namespace `Bandwidt
 | 2.0.4 | Fixed SIP Headers fields for creating a call |
 | 2.0.5 | Fixed SIP key names |
 | 2.0.6 | Changed timeout to 140 seconds |
+| 3.0.0 | Update error responses. `Errors::GenericError` now returns the status code as `code` and the response body as `message`. `Errors::GenericIrisError` now returns only when the http code is >= 400 |
 
 ## Install
 

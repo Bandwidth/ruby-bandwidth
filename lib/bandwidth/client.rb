@@ -130,7 +130,7 @@ module Bandwidth
     def check_response(response)
       if response.status >= 400
         parsed_body = JSON.parse(response.body)
-        raise Errors::GenericError.new(parsed_body['code'], parsed_body['message'])
+        raise Errors::GenericError.new(response.status, parsed_body)
       end
     end
 
