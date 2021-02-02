@@ -1,6 +1,7 @@
 # ruby-bandwidth
 
-This project is archived. Please go to https://github.com/Bandwidth/ruby-sdk
+> Deprecation Notice
+> This project is deprecated. Please go to https://github.com/Bandwidth/ruby-sdk
 
 [![Build](https://travis-ci.org/Bandwidth/ruby-bandwidth.png)](https://travis-ci.org/Bandwidth/ruby-bandwidth)
 
